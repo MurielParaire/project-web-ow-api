@@ -73,7 +73,8 @@ export async function getUserHistoryByIdDB(id, limit, offset) {
 
 export async function getUserIdByTokenDB(token) {
     try {
-        let results = await basic_admin_pool.query('SELECT user_id FROM user_hash WHERE hash = $1;', [token]);
+        let results = await basic_admin_pool.query('SELECT user_id FROM user_hash WHERE hash = $1 ;', [token]);
+        console.log(results)
         if (results.rows.length > 0) {
             return results.rows[0].user_id;
         }
@@ -93,7 +94,6 @@ export async function getUserByIdDB(id) {
         }
         let user = results.rows[0];
         user.roles = await getUserRolesByIdDB(id);
-        console.log(user)
         return user;
     }
     catch (err) {
@@ -121,11 +121,61 @@ export async function getUserRolesByIdDB(id) {
 export async function postUserHistoryDB(id, history) {
     try {
         let results = await basic_admin_pool.query('INSERT INTO history (team_a, team_b, winner, date_time, id_user) VALUES ($1, $2, $3, $4, $5) ;', [history.team_a, history.team_b, history.winner, history.date_time, id]);
-        console.log(results)
         if (results.rowCount > 0) {
             return 1;
         }
         return 0;
+    }
+    catch (err) {
+        console.log(err);
+        return 0;
+    }
+}
+
+
+export async function createUserDB(user) {
+    try {
+        let results = await basic_admin_pool.query('INSERT INTO ow_user (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5) ;', [user.username, user.firstname, user.lastname, user.email, user.password]);
+        if (results.rowCount > 0) {
+            let id = await getUserIdByUsername(user.username);
+            let res = await addPublicRoleDB(id)
+            if (res.rowCount > 0) {
+                return 1;
+            }
+        }
+        return 0;
+
+    }
+    catch (err) {
+        console.log(err);
+        return 0;
+    }
+}
+
+export async function addPublicRoleDB(user) {
+    try {
+        let results = await basic_admin_pool.query('INSERT INTO user_role (id_role, id_user) VALUES (1, $1) ;', [user]);
+        if (results.rowCount > 0) {
+            return 1;
+        }
+        return 0;
+
+    }
+    catch (err) {
+        console.log(err);
+        return 0;
+    }
+}
+
+
+export async function getUserIdByUsername(user) {
+    try {
+        let results = await basic_admin_pool.query('SELECT user_id FROM ow_user WHERE username = $1 ;', [user]);
+        if (results.rowCount > 0) {
+            return results.rows[0].user_id;
+        }
+        return 0;
+
     }
     catch (err) {
         console.log(err);

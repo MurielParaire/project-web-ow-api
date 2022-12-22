@@ -1,10 +1,14 @@
-import { getUserByUsernameDB, postUserHistoryDB, getUserIdByTokenDB, getUserHistoryByIdDB, getPasswordFromUserDB, createHashUserDB, getUserByIdDB } from '../database/userDB.js'
+import { getUserByUsernameDB, postUserHistoryDB, getUserIdByTokenDB, getUserHistoryByIdDB, getPasswordFromUserDB, createHashUserDB, getUserByIdDB, createUserDB } from '../database/userDB.js'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-const rounds = 10;
+const saltRounds = 10;
 
-function getHash(password) {
-  return bcrypt.hash(password, rounds);
+async function getHash(password) {
+  let salt = await bcrypt.genSalt(saltRounds);
+  let hash = await bcrypt.hash(password, salt)
+  console.log('Hash: ', hash)
+  return hash;
 }
 
 export async function postVerifyUserService(username, password) {
@@ -21,8 +25,17 @@ export async function postVerifyUserService(username, password) {
   while (hash.includes('/')) {
     hash = await getHash((password).toString());
   }
-  await createHashUserDB(result[0].user_id, hash);
-  return hash;
+  
+  let data = {
+      time: Date(),
+      userId: result[0].user_id,
+  }
+  /*algorithm: "ES256" */
+  const token = jwt.sign(data, process.env.JWT_SECRET_KEY, { expiresIn: '6400s' });
+  console.log('token')
+  console.log(token)
+  await createHashUserDB(result[0].user_id, token);
+  return token;
 }
 
 
@@ -33,6 +46,8 @@ export async function getUserByTokenService(token) {
     return 0;
   }
   let result = await getUserByIdDB(id);
+  console.log('k')
+  console.log(result)
   let Userrole = [];
   if (result.roles.length > 0) {
     if (result.roles.length > 1) {
@@ -46,6 +61,7 @@ export async function getUserByTokenService(token) {
     Userrole.push(getRole(result.roles[0].role))
     result.roles = Userrole
     result.history = await getUserHistoryByIdDB(id, 10, 0);
+    console.log(result)
     return result;
   }
 }
@@ -57,6 +73,12 @@ export async function postUserHistoryService(token, history) {
     return 0;
   }
   let result = await postUserHistoryDB(id, history);
+  return result;
+}
+
+export async function createUserService(user) {
+  user.password = await getHash(user.password);
+  let result = await createUserDB(user);
   return result;
 }
 

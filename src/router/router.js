@@ -1,7 +1,7 @@
 import express from 'express'
 import { getAllHeroesController, getHeroByIdController, getHeroByNameController, getEventsOfHeroByNameController } from '../controller/characterController.js'
 import { getAllEventsController, getEventByIdController, getEventByTypeController} from '../controller/eventController.js'
-import { postVerifyUserController, getUserByTokenController, postUserHistoryController } from '../controller/userController.js'
+import { postVerifyUserController, getUserByTokenController, postUserHistoryController, createUserController } from '../controller/userController.js'
 
 export const router = express.Router()
 
@@ -21,3 +21,4 @@ router.get('/events/type/:type', getEventByTypeController)
 router.post('/users/verify', postVerifyUserController);
 router.get('/users/token', getUserByTokenController);
 router.post('/users/history/new', postUserHistoryController);
+router.post('/users/create', createUserController);

@@ -1,4 +1,4 @@
-import {postVerifyUserService, getUserByTokenService, postUserHistoryService} from '../services/userService.js'
+import {postVerifyUserService, getUserByTokenService, postUserHistoryService, createUserService} from '../services/userService.js'
 
 export const postVerifyUserController = async (req, res) => {
     try {
@@ -34,6 +34,18 @@ export const postUserHistoryController = async (req, res) => {
         token = token.replace('"', '');
         const history = req.body;
         let results = await postUserHistoryService(token, history);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+export const createUserController = async (req, res) => {
+    try {
+        let user = req.body;
+        let results = await createUserService(user);
         res.status(200).json(results);
     }
     catch (err) {

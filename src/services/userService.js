@@ -1,4 +1,4 @@
-import { getUserByUsernameDB, deleteUserByIdDB, getSomeUsersDB, getAllUsersDB, postUserHistoryDB, getCountUserDB, getUserHistoryByIdDB, getPasswordFromUserDB, getUserByIdDB, createUserDB } from '../database/userDB.js'
+import { getUserByUsernameDB, modifyUserByIdDB, deleteUserByIdDB, getSomeUsersDB, getAllUsersDB, postUserHistoryDB, getCountUserDB, getUserHistoryByIdDB, getPasswordFromUserDB, getUserByIdDB, createUserDB } from '../database/userDB.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
@@ -129,5 +129,11 @@ export async function deleteUserByIdService(jwt, id) {
       }
       result = await deleteUserByIdDB(id);
   }
+  return result;
+}
+
+
+export async function modifyUserByIdService(user) {
+  let result = await modifyUserByIdDB(user);
   return result;
 }

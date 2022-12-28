@@ -1,7 +1,7 @@
 import express from 'express'
 import { getAllHeroesController, deleteHeroByIdController, getHeroesByTypeController, getHeroByIdController, getHeroByNameController, getEventsOfHeroByNameController, createHeroController } from '../controller/characterController.js'
 import { getAllEventsController, deleteEventByIdController, getEventByIdController, getEventByTypeController, createEventController} from '../controller/eventController.js'
-import { postVerifyUserController, deleteUserByIdController, getAllUsersController, getUserInfoController, postUserHistoryController, createUserController } from '../controller/userController.js'
+import { postVerifyUserController, modifyUserByIdController, deleteUserByIdController, getAllUsersController, getUserInfoController, postUserHistoryController, createUserController } from '../controller/userController.js'
 
 export const router = express.Router()
 
@@ -29,3 +29,4 @@ router.post('/users/verify', postVerifyUserController);
 router.post('/users/history/', postUserHistoryController);
 router.post('/users/create', createUserController);
 router.delete('/users/:id', deleteUserByIdController);
+router.put('/users/:id', modifyUserByIdController);

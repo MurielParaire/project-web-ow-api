@@ -1,4 +1,4 @@
-import {postVerifyUserService, deleteUserByIdService, getSomeUsersService, getAllUsersService, getUserInfoService, postUserHistoryService, createUserService} from '../services/userService.js'
+import {postVerifyUserService, modifyUserByIdService, deleteUserByIdService, getSomeUsersService, getAllUsersService, getUserInfoService, postUserHistoryService, createUserService} from '../services/userService.js'
 import Jwt from 'jsonwebtoken';
 
 
@@ -112,6 +112,27 @@ export const deleteUserByIdController = async (req, res) => {
         jwt = jwt.replace('"', '');
         jwt = Jwt.verify(jwt, 'secret');
         let results = await deleteUserByIdService(jwt, id);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+
+export const modifyUserByIdController = async (req, res) => {
+    try {
+        const id = req.params.id;
+        let jwt = req.header('authorization');
+        jwt = jwt.replace('"', '');
+        jwt = jwt.replace('"', '');
+        jwt = Jwt.verify(jwt, 'secret');
+        let user = req.body;
+        if (user.user_id.toString() !== id.toString()) {
+            return {msg: 'You are not allowed to modify any user other than yourself'};
+        }
+        let results = await modifyUserByIdService(user);
         res.status(200).json(results);
     }
     catch (err) {

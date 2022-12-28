@@ -71,7 +71,7 @@ export async function getUserIdByTokenDB(token) {
 
 export async function getUserByIdDB(id) {
     try {
-        let results = await basic_admin_pool.query('SELECT username, firstname, lastname, email FROM ow_user WHERE ow_user.user_id = $1;', [id]);
+        let results = await basic_admin_pool.query('SELECT user_id, username, firstname, lastname, email FROM ow_user WHERE ow_user.user_id = $1;', [id]);
         if (results.rowCount === 0) {
             return 0;
         }
@@ -211,6 +211,18 @@ export async function deleteUserByIdDB(id) {
         return results.rowCount;
     }
     catch (err) {
+        return {msg: err.message};
+    }
+}
+
+
+export async function modifyUserByIdDB(user) {
+    try {
+        let results = await basic_admin_pool.query('update ow_user set username=$1, firstname=$2, lastname=$3, email=$4 where user_id=$5', [user.username, user.firstname, user.lastname, user.email, user.user_id]);
+        return results.rowCount;
+    }
+    catch (err) {
+        console.log(err)
         return {msg: err.message};
     }
 }

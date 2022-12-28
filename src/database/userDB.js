@@ -6,8 +6,7 @@ export async function postVerifyUserDB() {
         return results.rows;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -21,8 +20,7 @@ export async function getUserByUsernameDB(username) {
         return 0;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -35,23 +33,10 @@ export async function getPasswordFromUserDB(id) {
         return 0;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
-export async function createHashUserDB(id, hash) {
-    try {
-        let results = await basic_admin_pool.query('INSERT INTO user_hash (user_id, hash) VALUES ($1, $2);', [id, hash]);
-        if (results.rowCount === 0) {
-            return 0;
-        }
-    }
-    catch (err) {
-        console.log(err);
-        return 0;
-    }
-}
 
 
 
@@ -65,8 +50,7 @@ export async function getUserHistoryByIdDB(id, limit, offset) {
         return 0;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -81,8 +65,7 @@ export async function getUserIdByTokenDB(token) {
         return 0;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -97,8 +80,7 @@ export async function getUserByIdDB(id) {
         return user;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -112,8 +94,7 @@ export async function getUserRolesByIdDB(id) {
         
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -127,8 +108,7 @@ export async function postUserHistoryDB(id, history) {
         return 0;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -139,16 +119,13 @@ export async function createUserDB(user) {
         if (results.rowCount > 0) {
             let id = await getUserIdByUsername(user.username);
             let res = await addPublicRoleDB(id)
-            if (res.rowCount > 0) {
-                return 1;
-            }
+            return res.rowCount;
         }
         return 0;
 
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -162,8 +139,7 @@ export async function addPublicRoleDB(user) {
 
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -178,7 +154,63 @@ export async function getUserIdByUsername(user) {
 
     }
     catch (err) {
-        console.log(err);
+        return {msg: err.message};
+    }
+}
+
+export async function getCountUserDB() {
+    try {
+        let results = await basic_admin_pool.query('select count(user_id) from ow_user;', []);
+        if (results.rowCount > 0) {
+            console.log(results)
+            return results.rows[0].count;
+        }
         return 0;
+        
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+
+
+export async function getAllUsersDB() {
+    try {
+        let results = await basic_admin_pool.query('select username, firstname, lastname, email from ow_user ;', []);
+        if (results.rowCount > 0) {
+            return results.rows;
+        }
+        return 0;
+        
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+
+export async function getSomeUsersDB(limit, offset) {
+    try {
+        let results = await basic_admin_pool.query('select user_id, username, firstname, lastname, email from ow_user offset ($1) limit( $2 ) ;', [offset, limit]);
+        if (results.rowCount > 0) {
+            return results.rows;
+        }
+        return 0;
+        
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+
+export async function deleteUserByIdDB(id) {
+    try {
+        let results = await basic_admin_pool.query('delete from ow_user where user_id=$1;', [id]);
+        return results.rowCount;
+    }
+    catch (err) {
+        return {msg: err.message};
     }
 }

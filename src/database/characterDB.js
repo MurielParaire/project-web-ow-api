@@ -1,3 +1,4 @@
+import { basic_admin_pool } from './connection_details/connection_admin.js';
 import { public_pool } from './connection_details/connection_public.js'
 
 
@@ -7,8 +8,17 @@ export async function getAllHeroesDB() {
         return results.rows;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
+    }
+}
+
+export async function getSomeHeroesDB(limit, offset) {
+    try {
+        let results = await public_pool.query('SELECT * FROM character offset( $1 ) limit( $2 );', [offset, limit]);
+        return results.rows;
+    }
+    catch (err) {
+        return {msg: err.message};
     }
 }
 
@@ -18,8 +28,7 @@ export async function getHeroByIdDB(id) {
         return results.rows;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -29,8 +38,7 @@ export async function getHeroByNameDB(name) {
         return results.rows;
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -45,8 +53,7 @@ export async function getEventsOfHeroByNameDB(name) {
         } 
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
     }
 }
 
@@ -62,7 +69,43 @@ export async function getImageOfHeroByNameDB(name) {
         } 
     }
     catch (err) {
-        console.log(err);
-        return 0;
+        return {msg: err.message};
+    }
+}
+
+export async function createHeroDB(hero) {
+    try {
+        let results = await basic_admin_pool.query('insert into character (name, role, description, image) values ($1, $2, $3, $4);', [hero.name, hero.role, hero.description, hero.image]);
+        return results.rowCount;
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+
+export async function getHeroesByTypeDB(type) {
+    try {
+        let results = await basic_admin_pool.query('select * from character where role= $1 ;', [type]);
+        if (results.rows.length > 0) {
+          return results.rows;
+        }
+        else {
+           return 0;
+        } 
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+
+export async function deleteHeroByIdDB(id) {
+    try {
+        let results = await basic_admin_pool.query('delete from character where id_char=$1;', [id]);
+        return results.rowCount;
+    }
+    catch (err) {
+        return {msg: err.message};
     }
 }

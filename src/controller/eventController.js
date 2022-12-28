@@ -1,8 +1,27 @@
-import {getAllEventsService, getEventByIdService, getEventByTypeService} from '../services/eventService.js'
+import {getAllEventsService, deleteEventByIdService, getSomeEventsService, getEventByIdService, getEventByTypeService, createEventService} from '../services/eventService.js'
+import Jwt from 'jsonwebtoken'
+
 
 export const getAllEventsController = async (req, res) => {
     try {
-        let results = await getAllEventsService();
+        let keys = Object.keys(req.headers);
+        let limit = false;
+        let offset = false;
+        let results = 0;
+        keys.forEach(key => {
+            if (key === 'offset') {
+                offset = true;
+            }
+            else if (key === 'limit') {
+                limit = true;
+            }
+        })
+        if (limit === true && offset === true) {
+            results = await getSomeEventsService(req.header('limit'), req.header('offset'));
+        }
+        else {
+            results = await getAllEventsService();
+        }
         res.status(200).json(results);
     }
     catch (err) {
@@ -27,6 +46,39 @@ export const getEventByTypeController = async (req, res) => {
     try {
         const type = req.params.type;
         let results = await getEventByTypeService(type);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+export const createEventController = async (req, res) => {
+    try {
+        let jwt = req.header('authorization');
+        jwt = jwt.replace('"', '');
+        jwt = jwt.replace('"', '');
+        jwt = Jwt.verify(jwt, 'secret');
+        const event = req.body;
+        let results = await createEventService(jwt, event);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+
+export const deleteEventByIdController = async (req, res) => {
+    try {
+        const id = req.params.id;
+        let jwt = req.header('authorization');
+        jwt = jwt.replace('"', '');
+        jwt = jwt.replace('"', '');
+        jwt = Jwt.verify(jwt, 'secret');
+        let results = await deleteEventByIdService(jwt, id);
         res.status(200).json(results);
     }
     catch (err) {

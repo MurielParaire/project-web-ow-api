@@ -1,4 +1,4 @@
-import { getUserByUsernameDB, modifyUserByIdDB, deleteUserByIdDB, getSomeUsersDB, getAllUsersDB, postUserHistoryDB, getCountUserDB, getUserHistoryByIdDB, getPasswordFromUserDB, getUserByIdDB, createUserDB } from '../database/userDB.js'
+import { getUserByUsernameDB, getRoleIdFromRoleDB, addRoleToUserByUserIdDB, deleteRoleFromUserByUserIdDB, modifyUserByIdDB, deleteUserByIdDB, getSomeUsersDB, getAllUsersDB, postUserHistoryDB, getCountUserDB, getUserHistoryByIdDB, getPasswordFromUserDB, getUserByIdDB, createUserDB } from '../database/userDB.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
@@ -86,7 +86,16 @@ export async function getSomeUsersService(limit, offset, token) {
   user.roles = getRoles(user.roles)
   if (user.roles.admin === true) {
     let result = await getSomeUsersDB(limit, offset);
-    return result;
+    console.log('h');
+    console.log(result)
+    for (let count = 0; count < result.length; count++) {
+      let user = await getUserByIdDB(result[count].user_id);
+      user.roles = getRoles(user.roles)
+      result[count] = user;
+    }
+    console.log('result')
+    console.log(result)
+    return result;;
   }
   return 0;
 }
@@ -132,6 +141,39 @@ export async function deleteUserByIdService(jwt, id) {
   return result;
 }
 
+
+export async function deleteRoleFromUserByUserIdService(jwt, id, role) {
+  let user = await getUserByIdDB(jwt.userId);
+  user.roles = getRoles(user.roles);
+  let result = 0;
+  if (user.roles.admin === true) {
+      let deluser = await getUserByIdDB(id);
+      deluser.roles = getRoles(deluser.roles);
+      if (deluser.roles.admin === true) {
+        return {msg: 'You are not allowed to delete the role of an admin user'}
+      }
+      let roleId = await getRoleIdFromRoleDB(role);
+      result = await deleteRoleFromUserByUserIdDB(id, roleId.id);
+  }
+  return result;
+}
+
+
+export async function addRoleToUserByUserIdService(jwt, id, role) {
+  let user = await getUserByIdDB(jwt.userId);
+  user.roles = getRoles(user.roles);
+  let result = 0;
+  if (user.roles.admin === true) {
+      let adduser = await getUserByIdDB(id);
+      adduser.roles = getRoles(adduser.roles);
+      if (role === 'admin' && adduser.roles.admin === true || role === 'supervisor' && adduser.roles.supervisor === true || role === 'manager' && adduser.roles.manager === true) {
+        return {msg: 'This user already has this role.'}
+      }
+      let roleId = await getRoleIdFromRoleDB(role);
+      result = await addRoleToUserByUserIdDB(id, roleId.id);
+  }
+  return result;
+}
 
 export async function modifyUserByIdService(user) {
   let result = await modifyUserByIdDB(user);

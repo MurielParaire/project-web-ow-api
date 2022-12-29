@@ -192,7 +192,7 @@ export async function getAllUsersDB() {
 
 export async function getSomeUsersDB(limit, offset) {
     try {
-        let results = await basic_admin_pool.query('select user_id, username, firstname, lastname, email from ow_user offset ($1) limit( $2 ) ;', [offset, limit]);
+        let results = await basic_admin_pool.query('select user_id from ow_user offset ($1) limit($2)', [offset, limit]);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -219,6 +219,43 @@ export async function deleteUserByIdDB(id) {
 export async function modifyUserByIdDB(user) {
     try {
         let results = await basic_admin_pool.query('update ow_user set username=$1, firstname=$2, lastname=$3, email=$4 where user_id=$5', [user.username, user.firstname, user.lastname, user.email, user.user_id]);
+        return results.rowCount;
+    }
+    catch (err) {
+        console.log(err)
+        return {msg: err.message};
+    }
+}
+
+
+export async function deleteRoleFromUserByUserIdDB(id, role) {
+    try {
+        let results = await basic_admin_pool.query('delete from user_role where id_user=$1 and id_role = $2;', [id,role]);
+        return results.rowCount;
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+export async function getRoleIdFromRoleDB( role) {
+    try {
+        let results = await basic_admin_pool.query('select id from role where role=$1;', [role]);
+        if (results.rowCount === 0) {
+            return {msg: 'no role with that name found'};
+        }
+        return results.rows[0];
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+
+
+export async function addRoleToUserByUserIdDB(id, role) {
+    try {
+        let results = await basic_admin_pool.query('insert into user_role (id_role, id_user) values ($1,$2)', [role, id]);
         return results.rowCount;
     }
     catch (err) {

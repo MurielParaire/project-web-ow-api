@@ -1,7 +1,7 @@
 import express from 'express'
 import { getAllHeroesController, deleteHeroByIdController, getHeroesByTypeController, getHeroByIdController, getHeroByNameController, getEventsOfHeroByNameController, createHeroController } from '../controller/characterController.js'
 import { getAllEventsController, deleteEventByIdController, getEventByIdController, getEventByTypeController, createEventController} from '../controller/eventController.js'
-import { postVerifyUserController, modifyUserByIdController, deleteUserByIdController, getAllUsersController, getUserInfoController, postUserHistoryController, createUserController } from '../controller/userController.js'
+import { postVerifyUserController, deleteRoleFromUserByUserIdController, modifyUserByIdController, deleteUserByIdController, getAllUsersController, getUserInfoController, postUserHistoryController, createUserController, addRoleToUserByUserIdController } from '../controller/userController.js'
 
 export const router = express.Router()
 
@@ -26,7 +26,9 @@ router.delete('/events/:id', deleteEventByIdController);
 router.get('/users/info', getUserInfoController);
 router.get('/users', getAllUsersController);
 router.post('/users/verify', postVerifyUserController);
-router.post('/users/history/', postUserHistoryController);
+router.post('/users/history', postUserHistoryController);
 router.post('/users/create', createUserController);
 router.delete('/users/:id', deleteUserByIdController);
+router.delete('/users/:id/roles', deleteRoleFromUserByUserIdController);
 router.put('/users/:id', modifyUserByIdController);
+router.put('/users/:id/roles', addRoleToUserByUserIdController);

@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllHeroesController, deleteHeroByIdController, getHeroesByTypeController, getHeroByIdController, getHeroByNameController, getEventsOfHeroByNameController, createHeroController } from '../controller/characterController.js'
+import { getAllHeroesController, modifyHeroByIdController, deleteHeroByIdController, getHeroesByTypeController, getHeroByIdController, getHeroByNameController, getEventsOfHeroByNameController, createHeroController } from '../controller/characterController.js'
 import { getAllEventsController, modifyEventByIdController, deleteEventByIdController, getEventByIdController, getEventByTypeController, createEventController} from '../controller/eventController.js'
 import { postVerifyUserController, deleteRoleFromUserByUserIdController, modifyUserByIdController, deleteUserByIdController, getAllUsersController, getUserInfoController, postUserHistoryController, createUserController, addRoleToUserByUserIdController } from '../controller/userController.js'
 
@@ -13,6 +13,7 @@ router.get('/heroes/event/:name', getEventsOfHeroByNameController);
 router.get('/heroes/type/:type', getHeroesByTypeController);
 router.post('/heroes', createHeroController);
 router.delete('/heroes/:id', deleteHeroByIdController);
+router.put('/heroes/:id', modifyHeroByIdController);
 
 
 

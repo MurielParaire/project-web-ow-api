@@ -1,4 +1,4 @@
-import { getHeroesByTypeService, getSomeHeroesService, deleteHeroByIdService, getAllHeroesService, getHeroByIdService, getHeroByNameService, getEventsOfHeroByNameService, createHeroService } from '../services/characterService.js'
+import { getHeroesByTypeService, modifyHeroByIdService, getSomeHeroesService, deleteHeroByIdService, getAllHeroesService, getHeroByIdService, getHeroByNameService, getEventsOfHeroByNameService, createHeroService } from '../services/characterService.js'
 import Jwt from 'jsonwebtoken'
 
 
@@ -107,6 +107,29 @@ export const deleteHeroByIdController = async (req, res) => {
         jwt = jwt.replace('"', '');
         jwt = Jwt.verify(jwt, 'secret');
         let results = await deleteHeroByIdService(jwt, id);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+
+export const modifyHeroByIdController = async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id)
+        let jwt = req.header('authorization');
+        jwt = jwt.replace('"', '');
+        jwt = jwt.replace('"', '');
+        jwt = Jwt.verify(jwt, 'secret');
+        let hero = req.body;
+        console.log(hero)
+        if (hero.id_char.toString() !== id.toString()) {
+            return {msg: 'There was an error. Please reload your page and retry this operation.'};
+        }
+        let results = await modifyHeroByIdService(jwt, hero);
         res.status(200).json(results);
     }
     catch (err) {

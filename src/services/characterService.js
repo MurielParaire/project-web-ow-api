@@ -1,4 +1,4 @@
-import { getAllHeroesDB, getSomeHeroesDB, deleteHeroByIdDB, getHeroesByTypeDB, getHeroByIdDB, getHeroByNameDB, getEventsOfHeroByNameDB, getImageOfHeroByNameDB, createHeroDB } from '../database/characterDB.js'
+import { getAllHeroesDB, getSomeHeroesDB, modifyHeroByIdDB, deleteHeroByIdDB, getHeroesByTypeDB, getHeroByIdDB, getHeroByNameDB, getEventsOfHeroByNameDB, getImageOfHeroByNameDB, createHeroDB } from '../database/characterDB.js'
 import { getUserByIdDB } from '../database/userDB.js';
 import { getRoles } from './userService.js';
 
@@ -78,6 +78,22 @@ export async function deleteHeroByIdService(jwt, id) {
     let result = 0;
     if (user.roles.supervisor === true) {
         result = await deleteHeroByIdDB(id);
+    }
+    return result;
+}
+
+
+
+export async function modifyHeroByIdService(jwt, hero) {
+    console.log(hero)
+    let user = await getUserByIdDB(jwt.userId);
+    user.roles = getRoles(user.roles);
+    let result = 0;
+    if (user.roles.supervisor === true) {
+        result = await modifyHeroByIdDB(hero);
+    }
+    else {
+        return { msg: 'You are not allowed to modify any heroes.' }
     }
     return result;
 }

@@ -109,3 +109,16 @@ export async function deleteHeroByIdDB(id) {
         return {msg: err.message};
     }
 }
+
+
+export async function modifyHeroByIdDB(hero) {
+    try {
+        console.log(hero)
+        let results = await basic_admin_pool.query('update character set name = $1, role = $2, description = $3, image = $4 where id_char = $5', [hero.name, hero.role, hero.description, hero.image, hero.id_char]);
+        return results.rowCount;
+    }
+    catch (err) {
+        console.log(err)
+        return {msg: err.message};
+    }
+}

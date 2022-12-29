@@ -1,4 +1,4 @@
-import {getAllEventsService, deleteEventByIdService, getSomeEventsService, getEventByIdService, getEventByTypeService, createEventService} from '../services/eventService.js'
+import {getAllEventsService, modifyEventByIdService, deleteEventByIdService, getSomeEventsService, getEventByIdService, getEventByTypeService, createEventService} from '../services/eventService.js'
 import Jwt from 'jsonwebtoken'
 
 
@@ -79,6 +79,28 @@ export const deleteEventByIdController = async (req, res) => {
         jwt = jwt.replace('"', '');
         jwt = Jwt.verify(jwt, 'secret');
         let results = await deleteEventByIdService(jwt, id);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+
+export const modifyEventByIdController = async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id)
+        let jwt = req.header('authorization');
+        jwt = jwt.replace('"', '');
+        jwt = jwt.replace('"', '');
+        jwt = Jwt.verify(jwt, 'secret');
+        let event = req.body;
+        if (event.event_id.toString() !== id.toString()) {
+            return {msg: 'There was an error. Please reload your page and retry this operation.'};
+        }
+        let results = await modifyEventByIdService(jwt, event);
         res.status(200).json(results);
     }
     catch (err) {

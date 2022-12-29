@@ -1,5 +1,5 @@
 import { getHeroByNameDB } from '../database/characterDB.js';
-import {getAllEventsDB, deleteEventByIdDB, getSomeEventsDB, getEventByIdDB, getEventByTypeDB, createEventDB} from '../database/eventDB.js'
+import {getAllEventsDB, deleteEventByIdDB, modifyEventByIdDB, getSomeEventsDB, getEventByIdDB, getEventByTypeDB, createEventDB} from '../database/eventDB.js'
 import {getUserByIdDB} from '../database/userDB.js'
 import {getRoles} from '../services/userService.js'
 
@@ -66,3 +66,17 @@ export async function deleteEventByIdService(jwt, id) {
     }
     return result;
 }
+
+
+export async function modifyEventByIdService(jwt, event) {
+    let user = await getUserByIdDB(jwt.userId);
+    user.roles = getRoles(user.roles);
+    let result = 0;
+    if (user.roles.manager === true) {
+        result = await modifyEventByIdDB(event);
+    }
+    else {
+        return {msg: 'You are not allowed to modify any events.'}
+    }
+    return result;
+  }

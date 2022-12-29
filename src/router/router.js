@@ -1,6 +1,6 @@
 import express from 'express'
 import { getAllHeroesController, deleteHeroByIdController, getHeroesByTypeController, getHeroByIdController, getHeroByNameController, getEventsOfHeroByNameController, createHeroController } from '../controller/characterController.js'
-import { getAllEventsController, deleteEventByIdController, getEventByIdController, getEventByTypeController, createEventController} from '../controller/eventController.js'
+import { getAllEventsController, modifyEventByIdController, deleteEventByIdController, getEventByIdController, getEventByTypeController, createEventController} from '../controller/eventController.js'
 import { postVerifyUserController, deleteRoleFromUserByUserIdController, modifyUserByIdController, deleteUserByIdController, getAllUsersController, getUserInfoController, postUserHistoryController, createUserController, addRoleToUserByUserIdController } from '../controller/userController.js'
 
 export const router = express.Router()
@@ -15,12 +15,14 @@ router.post('/heroes', createHeroController);
 router.delete('/heroes/:id', deleteHeroByIdController);
 
 
+
 //all routes concerning the events
 router.get('/events', getAllEventsController);
 router.get('/events/:id', getEventByIdController);
 router.get('/events/type/:type', getEventByTypeController)
 router.post('/events/', createEventController);
 router.delete('/events/:id', deleteEventByIdController);
+router.put('/events/:id', modifyEventByIdController);
 
 //all user interactions
 router.get('/users/info', getUserInfoController);

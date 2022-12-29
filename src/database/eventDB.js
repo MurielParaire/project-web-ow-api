@@ -14,10 +14,11 @@ export async function getAllEventsDB() {
 
 export async function getSomeEventsDB(limit, offset) {
     try {
-        let results = await public_pool.query('select event_id, type, e.description, name from event e left join character c on e.character = c.id_char offset( $1 ) limit( $2 );', [offset, limit]);
+        let results = await public_pool.query('select e.event_id, c.name, e.description, e.type from event e left join character c on e.character = c.id_char order by e.event_id offset( $1 ) limit( $2 );', [offset, limit]);
         return results.rows;
     }
     catch (err) {
+        console.log(err)
         return {msg: err.message};
     }
 }
@@ -66,6 +67,17 @@ export async function deleteEventByIdDB(id) {
     try {
         console.log(id)
         let results = await basic_admin_pool.query('delete from event where event_id= $1 ;', [id]);
+        return results.rowCount;
+    }
+    catch (err) {
+        console.log(err)
+        return {msg: err.message};
+    }
+}
+
+export async function modifyEventByIdDB(event) {
+    try {
+        let results = await basic_admin_pool.query('update event set type = $1, description = $2, character = $3 where event_id = $4', [event.type, event.description, event.character, event.event_id]);
         return results.rowCount;
     }
     catch (err) {

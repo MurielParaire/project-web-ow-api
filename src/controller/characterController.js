@@ -1,5 +1,5 @@
 import { getHeroesByTypeService, modifyHeroByIdService, getSomeHeroesService, deleteHeroByIdService, getAllHeroesService, getHeroByIdService, getHeroByNameService, getEventsOfHeroByNameService, createHeroService } from '../services/characterService.js'
-import Jwt from 'jsonwebtoken'
+import { getJWT } from '../database/token.js';
 
 
 export const getAllHeroesController = async (req, res) => {
@@ -72,9 +72,11 @@ export const getEventsOfHeroByNameController = async (req, res) => {
 export const createHeroController = async (req, res) => {
     try {
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let hero = req.body;
         let results = await createHeroService(jwt, hero);
         res.status(200).json(results);
@@ -103,9 +105,11 @@ export const deleteHeroByIdController = async (req, res) => {
     try {
         const id = req.params.id;
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let results = await deleteHeroByIdService(jwt, id);
         res.status(200).json(results);
     }
@@ -121,9 +125,11 @@ export const modifyHeroByIdController = async (req, res) => {
         const id = req.params.id;
         console.log(id)
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let hero = req.body;
         console.log(hero)
         if (hero.id_char.toString() !== id.toString()) {

@@ -1,5 +1,5 @@
 import {postVerifyUserService, addRoleToUserByUserIdService, deleteRoleFromUserByUserIdService, modifyUserByIdService, deleteUserByIdService, getSomeUsersService, getAllUsersService, getUserInfoService, postUserHistoryService, createUserService} from '../services/userService.js'
-import Jwt from 'jsonwebtoken';
+import { getJWT } from '../database/token.js';
 
 
 export const postVerifyUserController = async (req, res) => {
@@ -17,9 +17,11 @@ export const postVerifyUserController = async (req, res) => {
 export const getUserInfoController = async (req, res) => {
     try {
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let results = await getUserInfoService(jwt);
         res.status(200).json(results);
     }
@@ -33,9 +35,11 @@ export const getUserInfoController = async (req, res) => {
 export const postUserHistoryController = async (req, res) => {
     try {
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let id = jwt.userId;
         if (id === 0) {
             return 0
@@ -72,9 +76,11 @@ export const createUserController = async (req, res) => {
 export const getAllUsersController = async (req, res) => {
     try {
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let keys = Object.keys(req.headers);
         let limit = false;
         let offset = false;
@@ -108,9 +114,11 @@ export const deleteUserByIdController = async (req, res) => {
     try {
         const id = req.params.id;
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let results = await deleteUserByIdService(jwt, id);
         res.status(200).json(results);
     }
@@ -125,9 +133,11 @@ export const modifyUserByIdController = async (req, res) => {
     try {
         const id = req.params.id;
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let user = req.body;
         if (user.user_id.toString() !== id.toString()) {
             return {msg: 'You are not allowed to modify any user other than yourself'};
@@ -147,9 +157,11 @@ export const deleteRoleFromUserByUserIdController = async (req, res) => {
         const id = req.params.id;
         const role = req.headers['role'];
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let results = await deleteRoleFromUserByUserIdService(jwt, id, role);
         res.status(200).json(results);
     }
@@ -165,9 +177,11 @@ export const addRoleToUserByUserIdController = async (req, res) => {
         const id = req.params.id;
         const role = req.headers['role'];
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let results = await addRoleToUserByUserIdService(jwt, id, role);
         res.status(200).json(results);
     }

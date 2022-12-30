@@ -58,7 +58,6 @@ export async function getUserHistoryByIdDB(id, limit, offset) {
 export async function getUserIdByTokenDB(token) {
     try {
         let results = await basic_admin_pool.query('SELECT user_id FROM user_hash WHERE hash = $1 ;', [token]);
-        console.log(results)
         if (results.rows.length > 0) {
             return results.rows[0].user_id;
         }
@@ -125,6 +124,7 @@ export async function createUserDB(user) {
 
     }
     catch (err) {
+        console.log(err)
         return {msg: err.message};
     }
 }
@@ -162,7 +162,6 @@ export async function getCountUserDB() {
     try {
         let results = await basic_admin_pool.query('select count(user_id) from ow_user;', []);
         if (results.rowCount > 0) {
-            console.log(results)
             return results.rows[0].count;
         }
         return 0;
@@ -211,6 +210,7 @@ export async function deleteUserByIdDB(id) {
         return results.rowCount;
     }
     catch (err) {
+        console.log(err)
         return {msg: err.message};
     }
 }

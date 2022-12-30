@@ -102,10 +102,12 @@ export async function getHeroesByTypeDB(type) {
 
 export async function deleteHeroByIdDB(id) {
     try {
+        console.log(id)
         let results = await basic_admin_pool.query('delete from character where id_char=$1;', [id]);
         return results.rowCount;
     }
     catch (err) {
+        console.log(err)
         return {msg: err.message};
     }
 }

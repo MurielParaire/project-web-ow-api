@@ -29,7 +29,7 @@ export async function postVerifyUserService(username, password) {
     time: Date(),
     userId: result[0].user_id,
   }
-  const token = jwt.sign(data, 'secret', { expiresIn: '6400s' }, process.env.JWT_SECRET_KEY);
+  const token = jwt.sign(data, 'secret', { expiresIn: '20s' }, process.env.JWT_SECRET_KEY);
   return token;
 }
 
@@ -86,15 +86,11 @@ export async function getSomeUsersService(limit, offset, token) {
   user.roles = getRoles(user.roles)
   if (user.roles.admin === true) {
     let result = await getSomeUsersDB(limit, offset);
-    console.log('h');
-    console.log(result)
     for (let count = 0; count < result.length; count++) {
       let user = await getUserByIdDB(result[count].user_id);
       user.roles = getRoles(user.roles)
       result[count] = user;
     }
-    console.log('result')
-    console.log(result)
     return result;;
   }
   return 0;

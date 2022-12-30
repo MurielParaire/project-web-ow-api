@@ -1,5 +1,5 @@
 import {getAllEventsService, modifyEventByIdService, deleteEventByIdService, getSomeEventsService, getEventByIdService, getEventByTypeService, createEventService} from '../services/eventService.js'
-import Jwt from 'jsonwebtoken'
+import { getJWT } from '../database/token.js';
 
 
 export const getAllEventsController = async (req, res) => {
@@ -57,9 +57,11 @@ export const getEventByTypeController = async (req, res) => {
 export const createEventController = async (req, res) => {
     try {
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         const event = req.body;
         let results = await createEventService(jwt, event);
         res.status(200).json(results);
@@ -75,9 +77,11 @@ export const deleteEventByIdController = async (req, res) => {
     try {
         const id = req.params.id;
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let results = await deleteEventByIdService(jwt, id);
         res.status(200).json(results);
     }
@@ -93,9 +97,11 @@ export const modifyEventByIdController = async (req, res) => {
         const id = req.params.id;
         console.log(id)
         let jwt = req.header('authorization');
-        jwt = jwt.replace('"', '');
-        jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
         let event = req.body;
         if (event.event_id.toString() !== id.toString()) {
             return {msg: 'There was an error. Please reload your page and retry this operation.'};

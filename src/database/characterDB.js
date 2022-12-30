@@ -1,4 +1,4 @@
-import { basic_admin_pool } from './connection_details/connection_admin.js';
+import { supervisor_pool } from './connection_details/connection_admin.js';
 import { public_pool } from './connection_details/connection_public.js'
 
 
@@ -75,7 +75,7 @@ export async function getImageOfHeroByNameDB(name) {
 
 export async function createHeroDB(hero) {
     try {
-        let results = await basic_admin_pool.query('insert into character (name, role, description, image) values ($1, $2, $3, $4);', [hero.name, hero.role, hero.description, hero.image]);
+        let results = await supervisor_pool.query('insert into character (name, role, description, image) values ($1, $2, $3, $4);', [hero.name, hero.role, hero.description, hero.image]);
         return results.rowCount;
     }
     catch (err) {
@@ -86,7 +86,7 @@ export async function createHeroDB(hero) {
 
 export async function getHeroesByTypeDB(type) {
     try {
-        let results = await basic_admin_pool.query('select * from character where role= $1 ;', [type]);
+        let results = await public_pool.query('select * from character where role= $1 ;', [type]);
         if (results.rows.length > 0) {
           return results.rows;
         }
@@ -103,7 +103,7 @@ export async function getHeroesByTypeDB(type) {
 export async function deleteHeroByIdDB(id) {
     try {
         console.log(id)
-        let results = await basic_admin_pool.query('delete from character where id_char=$1;', [id]);
+        let results = await supervisor_pool.query('delete from character where id_char=$1;', [id]);
         return results.rowCount;
     }
     catch (err) {
@@ -116,7 +116,7 @@ export async function deleteHeroByIdDB(id) {
 export async function modifyHeroByIdDB(hero) {
     try {
         console.log(hero)
-        let results = await basic_admin_pool.query('update character set name = $1, role = $2, description = $3, image = $4 where id_char = $5', [hero.name, hero.role, hero.description, hero.image, hero.id_char]);
+        let results = await supervisor_pool.query('update character set name = $1, role = $2, description = $3, image = $4 where id_char = $5', [hero.name, hero.role, hero.description, hero.image, hero.id_char]);
         return results.rowCount;
     }
     catch (err) {

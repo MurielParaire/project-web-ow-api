@@ -1,8 +1,8 @@
-import { basic_admin_pool } from './connection_details/connection_admin.js'
+import { admin_pool } from './connection_details/connection_admin.js'
 
 export async function postVerifyUserDB() {
     try {
-        let results = await basic_admin_pool.query('select * from event;');
+        let results = await admin_pool.query('select * from event;');
         return results.rows;
     }
     catch (err) {
@@ -13,7 +13,7 @@ export async function postVerifyUserDB() {
 
 export async function getUserByUsernameDB(username) {
     try {
-        let results = await basic_admin_pool.query('SELECT user_id FROM ow_user WHERE ow_user.username = $1 ;', [username]);
+        let results = await admin_pool.query('SELECT user_id FROM ow_user WHERE ow_user.username = $1 ;', [username]);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -26,7 +26,7 @@ export async function getUserByUsernameDB(username) {
 
 export async function getPasswordFromUserDB(id) {
     try {
-        let results = await basic_admin_pool.query('SELECT password FROM ow_user WHERE user_id = $1 ;', [id]);
+        let results = await admin_pool.query('SELECT password FROM ow_user WHERE user_id = $1 ;', [id]);
         if (results.rows.length > 0) {
             return results.rows[0].password;
         }
@@ -43,7 +43,7 @@ export async function getPasswordFromUserDB(id) {
 
 export async function getUserHistoryByIdDB(id, limit, offset) {
     try {
-        let results = await basic_admin_pool.query('SELECT team_a, team_b, winner, date_time FROM history WHERE id_user = $1 LIMIT $2 OFFSET $3;', [id, limit, offset]);
+        let results = await admin_pool.query('SELECT team_a, team_b, winner, date_time FROM history WHERE id_user = $1 LIMIT $2 OFFSET $3;', [id, limit, offset]);
         if (results.rows.length > 0) {
             return results.rows;
         }
@@ -57,7 +57,7 @@ export async function getUserHistoryByIdDB(id, limit, offset) {
 
 export async function getUserIdByTokenDB(token) {
     try {
-        let results = await basic_admin_pool.query('SELECT user_id FROM user_hash WHERE hash = $1 ;', [token]);
+        let results = await admin_pool.query('SELECT user_id FROM user_hash WHERE hash = $1 ;', [token]);
         if (results.rows.length > 0) {
             return results.rows[0].user_id;
         }
@@ -70,7 +70,7 @@ export async function getUserIdByTokenDB(token) {
 
 export async function getUserByIdDB(id) {
     try {
-        let results = await basic_admin_pool.query('SELECT user_id, username, firstname, lastname, email FROM ow_user WHERE ow_user.user_id = $1;', [id]);
+        let results = await admin_pool.query('SELECT user_id, username, firstname, lastname, email FROM ow_user WHERE ow_user.user_id = $1;', [id]);
         if (results.rowCount === 0) {
             return 0;
         }
@@ -85,7 +85,7 @@ export async function getUserByIdDB(id) {
 
 export async function getUserRolesByIdDB(id) {
     try {
-        let results = await basic_admin_pool.query('select role from ow_user join user_role on ow_user.user_id = user_role.id_user join role on user_role.id_role = role.id where ow_user.user_id = $1 ;', [id]);
+        let results = await admin_pool.query('select role from ow_user join user_role on ow_user.user_id = user_role.id_user join role on user_role.id_role = role.id where ow_user.user_id = $1 ;', [id]);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -100,7 +100,7 @@ export async function getUserRolesByIdDB(id) {
 
 export async function postUserHistoryDB(id, history) {
     try {
-        let results = await basic_admin_pool.query('INSERT INTO history (team_a, team_b, winner, date_time, id_user) VALUES ($1, $2, $3, $4, $5) ;', [history.team_a, history.team_b, history.winner, history.date_time, id]);
+        let results = await admin_pool.query('INSERT INTO history (team_a, team_b, winner, date_time, id_user) VALUES ($1, $2, $3, $4, $5) ;', [history.team_a, history.team_b, history.winner, history.date_time, id]);
         if (results.rowCount > 0) {
             return 1;
         }
@@ -114,7 +114,7 @@ export async function postUserHistoryDB(id, history) {
 
 export async function createUserDB(user) {
     try {
-        let results = await basic_admin_pool.query('INSERT INTO ow_user (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5) ;', [user.username, user.firstname, user.lastname, user.email, user.password]);
+        let results = await admin_pool.query('INSERT INTO ow_user (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5) ;', [user.username, user.firstname, user.lastname, user.email, user.password]);
         if (results.rowCount > 0) {
             let id = await getUserIdByUsername(user.username);
             let res = await addPublicRoleDB(id)
@@ -131,7 +131,7 @@ export async function createUserDB(user) {
 
 export async function addPublicRoleDB(user) {
     try {
-        let results = await basic_admin_pool.query('INSERT INTO user_role (id_role, id_user) VALUES (1, $1) ;', [user]);
+        let results = await admin_pool.query('INSERT INTO user_role (id_role, id_user) VALUES (1, $1) ;', [user]);
         if (results.rowCount > 0) {
             return 1;
         }
@@ -146,7 +146,7 @@ export async function addPublicRoleDB(user) {
 
 export async function getUserIdByUsername(user) {
     try {
-        let results = await basic_admin_pool.query('SELECT user_id FROM ow_user WHERE username = $1 ;', [user]);
+        let results = await admin_pool.query('SELECT user_id FROM ow_user WHERE username = $1 ;', [user]);
         if (results.rowCount > 0) {
             return results.rows[0].user_id;
         }
@@ -160,7 +160,7 @@ export async function getUserIdByUsername(user) {
 
 export async function getCountUserDB() {
     try {
-        let results = await basic_admin_pool.query('select count(user_id) from ow_user;', []);
+        let results = await admin_pool.query('select count(user_id) from ow_user;', []);
         if (results.rowCount > 0) {
             return results.rows[0].count;
         }
@@ -176,7 +176,7 @@ export async function getCountUserDB() {
 
 export async function getAllUsersDB() {
     try {
-        let results = await basic_admin_pool.query('select username, firstname, lastname, email from ow_user ;', []);
+        let results = await admin_pool.query('select username, firstname, lastname, email from ow_user ;', []);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -191,7 +191,7 @@ export async function getAllUsersDB() {
 
 export async function getSomeUsersDB(limit, offset) {
     try {
-        let results = await basic_admin_pool.query('select user_id from ow_user offset ($1) limit($2)', [offset, limit]);
+        let results = await admin_pool.query('select user_id from ow_user offset ($1) limit($2)', [offset, limit]);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -206,7 +206,7 @@ export async function getSomeUsersDB(limit, offset) {
 
 export async function deleteUserByIdDB(id) {
     try {
-        let results = await basic_admin_pool.query('delete from ow_user where user_id=$1;', [id]);
+        let results = await admin_pool.query('delete from ow_user where user_id=$1;', [id]);
         return results.rowCount;
     }
     catch (err) {
@@ -218,7 +218,7 @@ export async function deleteUserByIdDB(id) {
 
 export async function modifyUserByIdDB(user) {
     try {
-        let results = await basic_admin_pool.query('update ow_user set username=$1, firstname=$2, lastname=$3, email=$4 where user_id=$5', [user.username, user.firstname, user.lastname, user.email, user.user_id]);
+        let results = await admin_pool.query('update ow_user set username=$1, firstname=$2, lastname=$3, email=$4 where user_id=$5', [user.username, user.firstname, user.lastname, user.email, user.user_id]);
         return results.rowCount;
     }
     catch (err) {
@@ -230,7 +230,7 @@ export async function modifyUserByIdDB(user) {
 
 export async function deleteRoleFromUserByUserIdDB(id, role) {
     try {
-        let results = await basic_admin_pool.query('delete from user_role where id_user=$1 and id_role = $2;', [id,role]);
+        let results = await admin_pool.query('delete from user_role where id_user=$1 and id_role = $2;', [id,role]);
         return results.rowCount;
     }
     catch (err) {
@@ -240,7 +240,7 @@ export async function deleteRoleFromUserByUserIdDB(id, role) {
 
 export async function getRoleIdFromRoleDB( role) {
     try {
-        let results = await basic_admin_pool.query('select id from role where role=$1;', [role]);
+        let results = await admin_pool.query('select id from role where role=$1;', [role]);
         if (results.rowCount === 0) {
             return {msg: 'no role with that name found'};
         }
@@ -255,7 +255,7 @@ export async function getRoleIdFromRoleDB( role) {
 
 export async function addRoleToUserByUserIdDB(id, role) {
     try {
-        let results = await basic_admin_pool.query('insert into user_role (id_role, id_user) values ($1,$2)', [role, id]);
+        let results = await admin_pool.query('insert into user_role (id_role, id_user) values ($1,$2)', [role, id]);
         return results.rowCount;
     }
     catch (err) {

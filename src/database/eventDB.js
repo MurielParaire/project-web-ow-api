@@ -1,5 +1,5 @@
 import { public_pool } from './connection_details/connection_public.js'
-import { basic_admin_pool } from './connection_details/connection_admin.js';
+import { manager_pool } from './connection_details/connection_admin.js';
 
 export async function getAllEventsDB() {
     try {
@@ -54,7 +54,7 @@ export async function getEventByTypeDB(type) {
 
 export async function createEventDB(event) {
     try {
-        let results = await basic_admin_pool.query('INSERT INTO event (type, description, character) Values ($1, $2, $3);', [event.type, event.description, event.character]);
+        let results = await manager_pool.query('INSERT INTO event (type, description, character) Values ($1, $2, $3);', [event.type, event.description, event.character]);
         return results.rowCount;
     }
     catch (err) {
@@ -66,7 +66,7 @@ export async function createEventDB(event) {
 export async function deleteEventByIdDB(id) {
     try {
         console.log(id)
-        let results = await basic_admin_pool.query('delete from event where event_id= $1 ;', [id]);
+        let results = await manager_pool.query('delete from event where event_id= $1 ;', [id]);
         return results.rowCount;
     }
     catch (err) {
@@ -77,7 +77,7 @@ export async function deleteEventByIdDB(id) {
 
 export async function modifyEventByIdDB(event) {
     try {
-        let results = await basic_admin_pool.query('update event set type = $1, description = $2, character = $3 where event_id = $4', [event.type, event.description, event.character, event.event_id]);
+        let results = await manager_pool.query('update event set type = $1, description = $2, character = $3 where event_id = $4', [event.type, event.description, event.character, event.event_id]);
         return results.rowCount;
     }
     catch (err) {

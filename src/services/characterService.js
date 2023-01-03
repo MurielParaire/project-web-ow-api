@@ -1,4 +1,4 @@
-import { getAllHeroesDB, getSomeHeroesDB, modifyHeroByIdDB, deleteHeroByIdDB, getHeroesByTypeDB, getHeroByIdDB, getHeroByNameDB, getEventsOfHeroByNameDB, getImageOfHeroByNameDB, createHeroDB } from '../database/characterDB.js'
+import { getAllHeroesDB, getSomeHeroesDB, modifyHeroByIdDB, deleteHeroByIdDB, getHeroesByRoleDB, getHeroByIdDB, getHeroByNameDB, getEventsOfHeroByNameDB, getImageOfHeroByNameDB, createHeroDB } from '../database/characterDB.js'
 import { getUserByIdDB } from '../database/userDB.js';
 import { getRoles } from './userService.js';
 
@@ -15,7 +15,6 @@ export async function getSomeHeroesService(limit, offset) {
         return result;
     }
     catch (err) {
-        console.log(err);
         return err.err;
     }
 
@@ -53,21 +52,21 @@ export async function createHeroService(jwt, hero) {
     return result;
 }
 
-export async function getHeroesByTypeService(type) {
-    type = type.toLowerCase();
-    if (type !== 'dps' && type !== 'support' && type !== 'tank') {
+export async function getHeroesByRoleService(role) {
+    role = role.toLowerCase();
+    if (role !== 'dps' && role !== 'support' && role !== 'tank') {
         return 0;
     }
-    if (type === 'dps') {
-        type = 'DPS';
+    if (role === 'dps') {
+        role = 'DPS';
     }
-    else if (type === 'support') {
-        type = 'Support';
+    else if (role === 'support') {
+        role = 'Support';
     }
-    else if (type === 'tank') {
-        type = 'Tank';
+    else if (role === 'tank') {
+        role = 'Tank';
     }
-    let result = await getHeroesByTypeDB(type);
+    let result = await getHeroesByRoleDB(role);
     return result;
 }
 
@@ -85,7 +84,6 @@ export async function deleteHeroByIdService(jwt, id) {
 
 
 export async function modifyHeroByIdService(jwt, hero) {
-    console.log(hero)
     let user = await getUserByIdDB(jwt.userId);
     user.roles = getRoles(user.roles);
     let result = 0;

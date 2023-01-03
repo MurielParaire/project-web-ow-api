@@ -1,9 +1,10 @@
-import {postVerifyUserService, addRoleToUserByUserIdService, deleteRoleFromUserByUserIdService, modifyUserByIdService, deleteUserByIdService, getSomeUsersService, getAllUsersService, getUserInfoService, postUserHistoryService, createUserService} from '../services/userService.js'
-import { getJWT } from '../database/token.js';
+import {postVerifyUserService, getUserHistoryService, addRoleToUserByUserIdService, deleteRoleFromUserByUserIdService, modifyUserByIdService, deleteUserByIdService, getSomeUsersService, getAllUsersService, getUserInfoService, postUserHistoryService, createUserService} from '../services/userService.js'
+import { getJWT } from './token.js';
 
 
 export const postVerifyUserController = async (req, res) => {
     try {
+        
         const body = req.body;
         let results = await postVerifyUserService(body.username, body.password);
         res.status(200).json(results);
@@ -16,7 +17,7 @@ export const postVerifyUserController = async (req, res) => {
 
 export const getUserInfoController = async (req, res) => {
     try {
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
@@ -32,9 +33,29 @@ export const getUserInfoController = async (req, res) => {
 }
 
 
+export const getUserHistoryController = async (req, res) => {
+    try {
+        let jwt = req.header('auth');
+        jwt = getJWT(jwt)
+        if (jwt.status === 401) {
+            res.status(401).json(jwt)
+            return 0;
+        }
+        let limit = parseInt(req.query.limit);
+        let offset = parseInt(req.query.offset);
+        let results = await getUserHistoryService(jwt, limit, offset);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+
 export const postUserHistoryController = async (req, res) => {
     try {
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
@@ -64,7 +85,6 @@ export const createUserController = async (req, res) => {
         else {
             res.status(200).json(results);
         }
-        
     }
     catch (err) {
         res.status(500);
@@ -75,31 +95,18 @@ export const createUserController = async (req, res) => {
 
 export const getAllUsersController = async (req, res) => {
     try {
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
             return 0;
         }
-        let keys = Object.keys(req.headers);
-        let limit = false;
-        let offset = false;
         let results = 0;
-        keys.forEach(key => {
-            if (key === 'offset') {
-                offset = true;
-            }
-            else if (key === 'limit') {
-                limit = true;
-            }
-        })
-        if (limit === true && offset === true) {
-            console.log(req.headers['limit'])
-            console.log(req.headers['offset'])
-            results = await getSomeUsersService(req.header('limit'), req.header('offset'), jwt);
+        if ('limit' in req.query && 'offset' in req.query) {
+            results = await getSomeUsersService(req.query.limit, req.query.offset, jwt);
         }
         else {
-            results = await getAllUsersService();
+            results = await getAllUsersService(jwt);
         }
         res.status(200).json(results);
     }
@@ -113,7 +120,7 @@ export const getAllUsersController = async (req, res) => {
 export const deleteUserByIdController = async (req, res) => {
     try {
         const id = req.params.id;
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
@@ -132,7 +139,7 @@ export const deleteUserByIdController = async (req, res) => {
 export const modifyUserByIdController = async (req, res) => {
     try {
         const id = req.params.id;
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
@@ -156,7 +163,7 @@ export const deleteRoleFromUserByUserIdController = async (req, res) => {
     try {
         const id = req.params.id;
         const role = req.headers['role'];
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
@@ -176,7 +183,7 @@ export const addRoleToUserByUserIdController = async (req, res) => {
     try {
         const id = req.params.id;
         const role = req.headers['role'];
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)

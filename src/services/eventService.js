@@ -1,5 +1,5 @@
 import { getHeroByNameDB } from '../database/characterDB.js';
-import { getAllEventsDB, deleteEventByIdDB, modifyEventByIdDB, getSomeEventsDB, getEventByIdDB, getEventByTypeDB, createEventDB } from '../database/eventDB.js'
+import { getAllEventsDB, getEventsWithoutHeroDB, getEventsForHeroDB, deleteEventByIdDB, modifyEventByIdDB, getSomeEventsDB, getEventByIdDB, getEventByTypeDB, createEventDB } from '../database/eventDB.js'
 import { getUserByIdDB } from '../database/userDB.js'
 import { getRoles } from '../services/userService.js'
 
@@ -24,59 +24,109 @@ export async function getSomeEventsService(limit, offset) {
 }
 
 export async function getEventByIdService(id) {
-    let result = await getEventByIdDB(id);
-    return result;
+    try {
+        let result = await getEventByIdDB(id);
+        return result;
+    }
+    catch (err) {
+        console.log(err);
+        return err.err;
+    }
 }
 
 export async function getEventByTypeService(type) {
-    let result = await getEventByTypeDB(type);
-    return result;
+    try {
+        let result = await getEventByTypeDB(type);
+        return result;
+    }
+    catch (err) {
+        console.log(err);
+        return err.err;
+    }
 }
 
 export async function createEventService(jwt, event) {
-    if (event.character === 0) {
-        event.character = null;
-    }
-    else {
-        let character = getHeroByNameDB(event.character);
-        if (character != 0) {
-            event.character = character.id_char;
-        }
-        else {
+    try {
+        if (event.character === 0) {
             event.character = null;
         }
+        else {
+            let character = getHeroByNameDB(event.character);
+            if (character != 0) {
+                event.character = character.id_char;
+            }
+            else {
+                event.character = null;
+            }
+        }
+        let user = await getUserByIdDB(jwt.userId);
+        user.roles = getRoles(user.roles);
+        let result = 0;
+        if (user.roles.manager === true) {
+            result = await createEventDB(event);
+            return result;
+        }
+        return 0;
     }
-    let user = await getUserByIdDB(jwt.userId);
-    user.roles = getRoles(user.roles);
-    let result = 0;
-    if (user.roles.manager === true) {
-        result = await createEventDB(event);
-        return result;
+    catch (err) {
+        console.log(err);
+        return err.err;
     }
-    return 0;
 }
 
 
 export async function deleteEventByIdService(jwt, id) {
-    let user = await getUserByIdDB(jwt.userId);
-    user.roles = getRoles(user.roles);
-    let result = 0;
-    if (user.roles.manager === true) {
-        result = await deleteEventByIdDB(id);
+    try {
+        let user = await getUserByIdDB(jwt.userId);
+        user.roles = getRoles(user.roles);
+        let result = 0;
+        if (user.roles.manager === true) {
+            result = await deleteEventByIdDB(id);
+        }
+        return result;
     }
-    return result;
+    catch (err) {
+        console.log(err);
+        return err.err;
+    }
 }
 
 
 export async function modifyEventByIdService(jwt, event) {
-    let user = await getUserByIdDB(jwt.userId);
-    user.roles = getRoles(user.roles);
-    let result = 0;
-    if (user.roles.manager === true) {
-        result = await modifyEventByIdDB(event);
+    try {
+        let user = await getUserByIdDB(jwt.userId);
+        user.roles = getRoles(user.roles);
+        let result = 0;
+        if (user.roles.manager === true) {
+            let hero = await getHeroByNameDB(event.name);
+            if (hero.length > 0) {
+                event.character = hero[0].id_char;
+            }
+            result = await modifyEventByIdDB(event);
+        }
+        else {
+            return { msg: 'You are not allowed to modify any events.' }
+        }
+        return result;
     }
-    else {
-        return { msg: 'You are not allowed to modify any events.' }
+    catch (err) {
+        console.log(err);
+        return err.err;
     }
-    return result;
+}
+
+
+export async function getEventsForHeroService(hero) {
+    try {
+        if (hero === 0) {
+            let result = await getEventsWithoutHeroDB();
+            return result;
+        }
+        let result = await getEventsForHeroDB(hero);
+        return result;
+    }
+    catch (err) {
+        console.log(err);
+        return err.err;
+    }
 }

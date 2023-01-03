@@ -1,9 +1,9 @@
 import { public_pool } from './connection_details/connection_public.js'
-import { manager_pool } from './connection_details/connection_admin.js';
+import { manager_pool } from './connection_details/connection_manager.js';
 
 export async function getAllEventsDB() {
     try {
-        let results = await public_pool.query('select type, e.description, name from event e left join character c on e.character = c.id_char;');
+        let results = await public_pool.query('select type, e.description, name, e.event_id from event e left join character c on e.character = c.id_char;');
         return results.rows;
     }
     catch (err) {
@@ -65,7 +65,6 @@ export async function createEventDB(event) {
 
 export async function deleteEventByIdDB(id) {
     try {
-        console.log(id)
         let results = await manager_pool.query('delete from event where event_id= $1 ;', [id]);
         return results.rowCount;
     }
@@ -82,6 +81,32 @@ export async function modifyEventByIdDB(event) {
     }
     catch (err) {
         console.log(err)
+        return {msg: err.message};
+    }
+}
+
+export async function getEventsForHeroDB(hero) {
+    try {
+        let results = await public_pool.query('select * from event where character = $1;', [hero]);
+        if (results.rows.length > 0) {
+            return results.rows;
+          }
+        return 0;
+    }
+    catch (err) {
+        return {msg: err.message};
+    }
+}
+
+export async function getEventsWithoutHeroDB() {
+    try {
+        let results = await public_pool.query('select * from event where character is null;', []);
+        if (results.rows.length > 0) {
+            return results.rows;
+          }
+        return 0;
+    }
+    catch (err) {
         return {msg: err.message};
     }
 }

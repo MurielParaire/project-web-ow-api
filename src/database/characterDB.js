@@ -1,4 +1,4 @@
-import { supervisor_pool } from './connection_details/connection_admin.js';
+import { supervisor_pool } from './connection_details/connection_supervisor.js';
 import { public_pool } from './connection_details/connection_public.js'
 
 
@@ -84,9 +84,9 @@ export async function createHeroDB(hero) {
 }
 
 
-export async function getHeroesByTypeDB(type) {
+export async function getHeroesByRoleDB(role) {
     try {
-        let results = await public_pool.query('select * from character where role= $1 ;', [type]);
+        let results = await public_pool.query('select * from character where role= $1 ;', [role]);
         if (results.rows.length > 0) {
           return results.rows;
         }
@@ -102,7 +102,6 @@ export async function getHeroesByTypeDB(type) {
 
 export async function deleteHeroByIdDB(id) {
     try {
-        console.log(id)
         let results = await supervisor_pool.query('delete from character where id_char=$1;', [id]);
         return results.rowCount;
     }
@@ -115,7 +114,6 @@ export async function deleteHeroByIdDB(id) {
 
 export async function modifyHeroByIdDB(hero) {
     try {
-        console.log(hero)
         let results = await supervisor_pool.query('update character set name = $1, role = $2, description = $3, image = $4 where id_char = $5', [hero.name, hero.role, hero.description, hero.image, hero.id_char]);
         return results.rowCount;
     }

@@ -29,7 +29,7 @@ export async function postVerifyUserService(username, password) {
     time: Date(),
     userId: result[0].user_id,
   }
-  const token = jwt.sign(data, 'secret', { expiresIn: '20s' }, process.env.JWT_SECRET_KEY);
+  const token = jwt.sign(data, 'secret', { expiresIn: '7200s' }, process.env.JWT_SECRET_KEY);
   return token;
 }
 
@@ -42,7 +42,15 @@ export async function getUserInfoService(token) {
   }
   let result = await getUserByIdDB(id);
   result.roles = getRoles(result.roles)
-  result.history = await getUserHistoryByIdDB(id, 10, 0);
+  return result;
+}
+
+export async function getUserHistoryService(token, limit, offset) {
+  let id = token.userId;
+  if (id === 0) {
+    return 0;
+  }
+  let result = await getUserHistoryByIdDB(id, limit, offset);
   return result;
 }
 

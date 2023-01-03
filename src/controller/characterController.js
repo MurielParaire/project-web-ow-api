@@ -1,23 +1,14 @@
-import { getHeroesByTypeService, modifyHeroByIdService, getSomeHeroesService, deleteHeroByIdService, getAllHeroesService, getHeroByIdService, getHeroByNameService, getEventsOfHeroByNameService, createHeroService } from '../services/characterService.js'
-import { getJWT } from '../database/token.js';
+import { getHeroesByRoleService, modifyHeroByIdService, getSomeHeroesService, deleteHeroByIdService, getAllHeroesService, getHeroByIdService, getHeroByNameService, getEventsOfHeroByNameService, createHeroService } from '../services/characterService.js'
+import { getJWT } from './token.js';
 
 
 export const getAllHeroesController = async (req, res) => {
     try {
-        let keys = Object.keys(req.headers);
-        let limit = false;
-        let offset = false;
         let results = 0;
-        keys.forEach(key => {
-            if (key === 'offset') {
-                offset = true;
-            }
-            else if (key === 'limit') {
-                limit = true;
-            }
-        })
-        if (limit === true && offset === true) {
-            results = await getSomeHeroesService(req.header('limit'), req.header('offset'));
+        console.log('query')
+        console.log(req.query)
+        if ('limit' in req.query && 'offset' in req.query) {
+            results = await getSomeHeroesService(req.query.limit, req.query.offset);
         }
         else {
             results = await getAllHeroesService();
@@ -25,6 +16,7 @@ export const getAllHeroesController = async (req, res) => {
         res.status(200).json(results);
     }
     catch (err) {
+        console.log("j")
         res.status(500);
         console.log(err);
     }
@@ -71,7 +63,7 @@ export const getEventsOfHeroByNameController = async (req, res) => {
 
 export const createHeroController = async (req, res) => {
     try {
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
@@ -88,10 +80,10 @@ export const createHeroController = async (req, res) => {
 }
 
 
-export const getHeroesByTypeController = async (req, res) => {
+export const getHeroesByRoleController = async (req, res) => {
     try {
-        const type = req.params.type;
-        let results = await getHeroesByTypeService(type);
+        const role = req.params.role;
+        let results = await getHeroesByRoleService(role);
         res.status(200).json(results);
     }
     catch (err) {
@@ -104,7 +96,7 @@ export const getHeroesByTypeController = async (req, res) => {
 export const deleteHeroByIdController = async (req, res) => {
     try {
         const id = req.params.id;
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
@@ -123,15 +115,13 @@ export const deleteHeroByIdController = async (req, res) => {
 export const modifyHeroByIdController = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id)
-        let jwt = req.header('authorization');
+        let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
             res.status(401).json(jwt)
             return 0;
         }
         let hero = req.body;
-        console.log(hero)
         if (hero.id_char.toString() !== id.toString()) {
             return {msg: 'There was an error. Please reload your page and retry this operation.'};
         }

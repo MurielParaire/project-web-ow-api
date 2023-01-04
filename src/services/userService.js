@@ -161,7 +161,7 @@ export async function getSomeUsersService(limit, offset, token) {
 
 /* Description: gets the roles of a user
  * Arguments: 
- *     - rolelist (required) : a list of all roles of the user
+ *     - rolelist (required) : a list of all roles the user has
  * Returns : an object with the roles of the user
  * */
 export function getRoles(rolelist) {

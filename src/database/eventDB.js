@@ -25,7 +25,7 @@ export async function getAllEventsDB() {
  * */
 export async function getSomeEventsDB(limit, offset) {
     try {
-        let results = await public_pool.query('select e.event_id, c.name, e.description, e.type from event e left join character c on e.character = c.id_char order by e.event_id order by event_id offset( $1 ) limit( $2 );', [offset, limit]);
+        let results = await public_pool.query('select e.event_id, c.name, e.description, e.type from event e left join character c on e.character = c.id_char order by e.event_id offset( $1 ) limit( $2 );', [offset, limit]);
         return results.rows;
     }
     catch (err) {

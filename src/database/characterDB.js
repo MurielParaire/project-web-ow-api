@@ -7,7 +7,7 @@ import { public_pool } from './connection_details/connection_public.js'
  * */
 export async function getAllHeroesDB() {
     try {
-        let results = await public_pool.query('SELECT * FROM character ;');
+        let results = await public_pool.query('SELECT * FROM character order by event_id ;');
         return results.rows;
     }
     catch (err) {
@@ -25,7 +25,7 @@ export async function getAllHeroesDB() {
  * */
 export async function getSomeHeroesDB(limit, offset) {
     try {
-        let results = await public_pool.query('SELECT * FROM character offset( $1 ) limit( $2 );', [offset, limit]);
+        let results = await public_pool.query('SELECT * FROM character order by event_id offset( $1 ) limit( $2 );', [offset, limit]);
         return results.rows;
     }
     catch (err) {

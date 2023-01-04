@@ -6,7 +6,7 @@ import { admin_pool } from './connection_details/connection_admin.js'
  * */
 export async function getAllUsersDB() {
     try {
-        let results = await admin_pool.query('select username, firstname, lastname, email from ow_user ;', []);
+        let results = await admin_pool.query('select username, firstname, lastname, email from ow_user order by user_id ;', []);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -27,7 +27,7 @@ export async function getAllUsersDB() {
  * */
 export async function getSomeUsersDB(limit, offset) {
     try {
-        let results = await admin_pool.query('select user_id from ow_user offset ($1) limit($2)', [offset, limit]);
+        let results = await admin_pool.query('select user_id from ow_user order by user_id offset ($1) limit($2) ;', [offset, limit]);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -90,7 +90,7 @@ export async function getPasswordFromUserDB(id) {
  * */
 export async function getUserHistoryByIdDB(id, limit, offset) {
     try {
-        let results = await admin_pool.query('SELECT team_a, team_b, winner, date_time FROM history WHERE id_user = $1 LIMIT $2 OFFSET $3;', [id, limit, offset]);
+        let results = await admin_pool.query('SELECT team_a, team_b, winner, date_time FROM history WHERE id_user = $1 order by user_id LIMIT $2 OFFSET $3 ;', [id, limit, offset]);
         if (results.rows.length > 0) {
             return results.rows;
         }

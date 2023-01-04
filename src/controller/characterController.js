@@ -2,6 +2,15 @@ import { getHeroesByRoleService, modifyHeroByIdService, getSomeHeroesService, de
 import { getJWT } from './token.js';
 
 
+/* Description: returns all (or a limited number of) the heroes
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Query : 
+ *                     - limit (optional) : maximum number of heroes returned
+ *                     - offset (optional) : index of where to start / offset for collecting the heroes
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : a list of all the heroes
+ * */
 export const getAllHeroesController = async (req, res) => {
     try {
         let results = 0;
@@ -23,6 +32,14 @@ export const getAllHeroesController = async (req, res) => {
 }
 
 
+/* Description: returns a hero by his id
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Path : 
+ *                     - id (required) : id of the hero
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : the information of that specific hero
+ * */
 export const getHeroByIdController = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -36,6 +53,14 @@ export const getHeroByIdController = async (req, res) => {
 }
 
 
+/* Description: returns a hero by his name
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Path : 
+ *                     - name (required) : name of the hero
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : the information of the hero
+ * */
 export const getHeroByNameController = async (req, res) => {
     try {
         const name = req.params.name;
@@ -48,6 +73,36 @@ export const getHeroByNameController = async (req, res) => {
     }
 }
 
+
+/* Description: get all the heroes of a specific role
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Path : 
+ *                     - role (required) : the role token of the heroes we want to get
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : the list of all the heroes
+ * */
+export const getHeroesByRoleController = async (req, res) => {
+    try {
+        const role = req.params.role;
+        let results = await getHeroesByRoleService(role);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+
+/* Description: returns all the events connected to one hero by his name
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Path : 
+ *                     - name (required) : the name of the hero
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : a list of all the events of the specified hero
+ * */
 export const getEventsOfHeroByNameController = async (req, res) => {
     try {
         const name = req.params.name;
@@ -61,6 +116,16 @@ export const getEventsOfHeroByNameController = async (req, res) => {
 }
 
 
+/* Description: create a new hero
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Header : 
+ *                     - auth (required) : the jwt token of the user
+ *             > Body : 
+ *                     - hero (required) : the new hero's information
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : 1 if it went back, 0 if there was an error
+ * */
 export const createHeroController = async (req, res) => {
     try {
         let jwt = req.header('auth');
@@ -80,19 +145,16 @@ export const createHeroController = async (req, res) => {
 }
 
 
-export const getHeroesByRoleController = async (req, res) => {
-    try {
-        const role = req.params.role;
-        let results = await getHeroesByRoleService(role);
-        res.status(200).json(results);
-    }
-    catch (err) {
-        res.status(500);
-        console.log(err);
-    }
-}
-
-
+/* Description: delete a hero by his id
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Header : 
+ *                     - auth (required) : the jwt token of the user
+ *             > Path : 
+ *                     - id (required) : the hero's id
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : 1 if it went back, 0 if there was an error
+ * */
 export const deleteHeroByIdController = async (req, res) => {
     try {
         const id = req.params.id;
@@ -112,6 +174,16 @@ export const deleteHeroByIdController = async (req, res) => {
 }
 
 
+/* Description: create a new hero
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Header : 
+ *                     - auth (required) : the jwt token of the user
+ *             > Body : 
+ *                     - hero (required) : the new hero's information
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : 1 if it went back, 0 if there was an error
+ * */
 export const modifyHeroByIdController = async (req, res) => {
     try {
         const id = req.params.id;

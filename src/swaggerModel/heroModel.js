@@ -1,5 +1,5 @@
-//some swagger options
-//data model for a character : 
+//data model for a character/ hero (GET/POST) : 
+
 /**
  * @swagger
  * components:

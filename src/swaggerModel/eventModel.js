@@ -1,6 +1,5 @@
+//data model for an event (Get/Post): 
 
-//some swagger options
-//data model for a character : 
 /**
  * @swagger
  * components:

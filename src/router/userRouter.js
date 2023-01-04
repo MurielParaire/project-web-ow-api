@@ -316,6 +316,12 @@ userRouter.delete('/:id', deleteUserByIdController);
  *          required: true
  *          schema:
  *            type: string
+ *        - name: role
+ *          in: query
+ *          description: User role to remove
+ *          required: true
+ *          schema:
+ *            type: string
  *     responses:
  *       200:
  *         description: Delete a role from a user by its id
@@ -390,13 +396,12 @@ userRouter.put('/:id', modifyUserByIdController);
  *         required: true
  *         schema:
  *            type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *         description: The user to create
+ *       - name: role
+ *         in: query
+ *         description: User role to add
+ *         required: true
  *         schema:
- *            $ref: '#/components/schemas/user'
+ *            type: string
  *     responses:
  *       200:
  *         description: The list of all the last games played by the user.

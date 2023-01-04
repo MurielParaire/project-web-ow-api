@@ -9,7 +9,6 @@ import SwaggerOptions from 'swagger-ui-express';
 //the port on which our app runs
 const port = 3000;
 
-
 //creation of our express app
 const api = express();
 
@@ -53,16 +52,17 @@ const options = {
           },
         ],
     },
-    apis: ["src/swagger/model/*.js", "src/router/*.js"],
+    apis: ["src/swaggerModel/*.js", "src/router/*.js"],
 };
 
-
+//setting the url for our swagger documentation
 const specs = swaggerJSDoc(options);
 api.use(
     "/owapi/api-docs",
     SwaggerOptions.serve,
     SwaggerOptions.setup(specs, { explorer: true })
 );
+
 //running the api
 api.listen(port, () => {
     console.log(`App running on port http://localhost:${port}/owapi. \n The documentation can be found on http://localhost:${port}/owapi/api-docs`)

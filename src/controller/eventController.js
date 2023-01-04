@@ -2,6 +2,15 @@ import {getAllEventsService, getEventsForHeroService, modifyEventByIdService, de
 import { getJWT } from './token.js';
 
 
+/* Description: returns all (or a limited number of) the events
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Query : 
+ *                     - limit (optional) : maximum number of events returned
+ *                     - offset (optional) : index of where to start / offset for collecting the events
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : a list of all the events
+ * */
 export const getAllEventsController = async (req, res) => {
     try {
         let results = 0;
@@ -19,6 +28,15 @@ export const getAllEventsController = async (req, res) => {
     }
 }
 
+
+/* Description: returns an event by its id
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Path : 
+ *                     - id (required) : the id of the event
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : the event's information
+ * */
 export const getEventByIdController = async (req, res) => {
     try {
         const id = req.params.id;
@@ -31,6 +49,15 @@ export const getEventByIdController = async (req, res) => {
     }
 }
 
+
+/* Description: returns all the events of a specific type
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Path : 
+ *                     - type (required) : the specified type
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : a list of all the events with that type
+ * */
 export const getEventByTypeController = async (req, res) => {
     try {
         const type = req.params.type;
@@ -43,6 +70,38 @@ export const getEventByTypeController = async (req, res) => {
     }
 }
 
+
+/* Description: get all the events for a specific hero
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Path : 
+ *                     - id (required) : the id of the event
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : 1 if it went back, 0 if there was an error
+ * */
+export const getEventsForHeroController = async (req, res) => {
+    try {
+        const hero = parseInt(req.params.id);
+        let results = await getEventsForHeroService(hero);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500).json({msg: 'Wrong number format'});
+        console.log(err);
+    }
+}
+
+
+/* Description: create a new event
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Header : 
+ *                     - auth (required) : the jwt token of the user
+ *             > Body : 
+ *                     - event (required) : the new event's information
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : 1 if it went back, 0 if there was an error
+ * */
 export const createEventController = async (req, res) => {
     try {
         let jwt = req.header('auth');
@@ -62,6 +121,16 @@ export const createEventController = async (req, res) => {
 }
 
 
+/* Description: delete an event
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Header : 
+ *                     - auth (required) : the jwt token of the user
+ *             > Path : 
+ *                     - id (required) : the event's id
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : 1 if it went back, 0 if there was an error
+ * */
 export const deleteEventByIdController = async (req, res) => {
     try {
         const id = req.params.id;
@@ -81,6 +150,16 @@ export const deleteEventByIdController = async (req, res) => {
 }
 
 
+/* Description: modify an existing event
+ * Arguments: 
+ *     - req (required) : http request
+ *             > Header : 
+ *                     - auth (required) : the jwt token of the user
+ *             > Body : 
+ *                     - event (required) : the event's information
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : 1 if it went back, 0 if there was an error
+ * */
 export const modifyEventByIdController = async (req, res) => {
     try {
         const id = req.params.id;
@@ -104,14 +183,3 @@ export const modifyEventByIdController = async (req, res) => {
 }
 
 
-export const getEventsForHeroController = async (req, res) => {
-    try {
-        const hero = parseInt(req.params.id);
-        let results = await getEventsForHeroService(hero);
-        res.status(200).json(results);
-    }
-    catch (err) {
-        res.status(500).json({msg: 'Wrong number format'});
-        console.log(err);
-    }
-}

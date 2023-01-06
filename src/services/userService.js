@@ -43,7 +43,8 @@ export async function postVerifyUserService(username, password) {
     userId: user[0].user_id,
   }
   //the token expires after 4h automatically
-  const token = jwt.sign(data, process.env.JWT_PUBLIC_KEY, { expiresIn: '4h' }, process.env.JWT_SECRET_KEY);
+  // const token = jwt.sign(data, process.env.JWT_PUBLIC_KEY, { expiresIn: '4h' }, process.env.JWT_SECRET_KEY);
+  const token = jwt.sign(data, process.env.JWT_SECRET_KEY, { expiresIn: '4h' });
   return token;
 }
 
@@ -188,6 +189,7 @@ export function getRoles(rolelist) {
   }
   return roles;
 }
+
 
 
 /* Description: delete a user

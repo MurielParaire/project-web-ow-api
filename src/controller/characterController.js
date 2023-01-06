@@ -23,7 +23,6 @@ export const getAllHeroesController = async (req, res) => {
         res.status(200).json(results);
     }
     catch (err) {
-        console.log("j")
         res.status(500);
         console.log(err);
     }

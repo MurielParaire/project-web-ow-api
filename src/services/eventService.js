@@ -97,7 +97,6 @@ export async function getEventsForHeroService(hero) {
         hero = parseInt(hero);
         if (hero === 0) {
             //get all events that don't have a specified hero
-            console.log('0')
             let result = await getEventsWithoutHeroDB();
             return result;
         }

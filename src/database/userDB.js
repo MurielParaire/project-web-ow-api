@@ -132,7 +132,7 @@ export async function getUserByIdDB(id) {
  * */
 export async function getUserRolesByIdDB(id) {
     try {
-        let results = await admin_pool.query('select role from ow_user join user_role on ow_user.user_id = user_role.id_user join role on user_role.id_role = role.id where ow_user.user_id = $1 ;', [id]);
+        let results = await admin_pool.query('select role from role join user_role on user_role.id_role = role.id where user_role.id_user = $1 ;', [id]);
         if (results.rowCount > 0) {
             return results.rows;
         }
@@ -174,12 +174,9 @@ export async function postUserHistoryDB(id, history) {
  * */
 export async function createUserDB(user) {
     try {
-        console.log('user')
-        console.log(user)
         let results = await admin_pool.query('INSERT INTO ow_user (username, firstname, lastname, email, password) VALUES ($1, $2, $3, $4, $5) ;', [user.username, user.firstname, user.lastname, user.email, user.password]);
-        console.log(results)
         if (results.rowCount > 0) {
-            return res.rowCount;
+            return results.rowCount;
         }
         return 0;
 

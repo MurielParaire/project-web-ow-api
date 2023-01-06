@@ -221,20 +221,13 @@ userRouter.post('/history', postUserHistoryController);
  *   post:
  *     summary: create a new user
  *     tags: [Users]
- *     parameters:
- *       - name: auth
- *         in: header
- *         description: User authorization
- *         required: true
- *         schema:
- *            type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *         description: The user to create
- *         schema:
- *            $ref: '#/components/schemas/userPost'
+ *              description: The user to create
+ *              schema:
+ *                  $ref: '#/components/schemas/userPost'
  *     responses:
  *       200:
  *         description: status of the request.
@@ -262,7 +255,7 @@ userRouter.post('/create', createUserController);
  *     parameters:
  *        - name: id
  *          in: path
- *          description: event id
+ *          description: user id
  *          required: true
  *          schema:
  *            type: integer
@@ -301,19 +294,19 @@ userRouter.delete('/:id', deleteUserByIdController);
  *     summary: Delete a role from a user by its id
  *     tags: [Users]
  *     parameters:
- *        - name: id
- *          in: path
- *          description: event id
- *          required: true
- *          schema:
- *            type: integer
- *            format: int64
  *        - name: auth
  *          in: header
  *          description: User authorization
  *          required: true
  *          schema:
  *            type: string
+ *        - name: id
+ *          in: path
+ *          description: user id
+ *          required: true
+ *          schema:
+ *            type: integer
+ *            format: int64
  *        - name: role
  *          in: query
  *          description: User role to remove
@@ -358,9 +351,9 @@ userRouter.delete('/:id/roles', deleteRoleFromUserByUserIdController);
  *       required: true
  *       content:
  *         application/json:
- *         description: The user to create
- *         schema:
- *            $ref: '#/components/schemas/user'
+ *              description: The user to create
+ *              schema:
+ *                  $ref: '#/components/schemas/user'
  *     responses:
  *       200:
  *         description: The list of all the last games played by the user.
@@ -383,7 +376,7 @@ userRouter.put('/:id', modifyUserByIdController);
 
 /**
  * @swagger
- * /users/{id}roles:
+ * /users/{id}/roles:
  *   put:
  *     summary: add a new role to a user
  *     tags: [Users]
@@ -395,11 +388,12 @@ userRouter.put('/:id', modifyUserByIdController);
  *         schema:
  *            type: string
  *       - name: id
- *         in: query
- *         description: the id of the user
+ *         in: path
+ *         description: user id
  *         required: true
  *         schema:
- *            type: Integer
+ *           type: integer
+ *           format: int64
  *       - name: role
  *         in: query
  *         description: User role to add

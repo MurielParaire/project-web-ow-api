@@ -121,7 +121,6 @@ export async function getEventsForHeroDB(hero) {
 export async function getEventsWithoutHeroDB() {
     try {
         let results = await public_pool.query('select * from event where character is null;', []);
-        console.log(results)
         if (results.rowCount > 0) {
             return results.rows;
           }

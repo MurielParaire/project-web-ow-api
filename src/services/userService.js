@@ -232,9 +232,6 @@ export async function modifyUserByIdService(user) {
  * Returns : 1 if it worked, 0 if it didn't or an error message in case an error is thrown
  * */
 export async function deleteRoleFromUserByUserIdService(jwt, id, role) {
-  if (role !== 'admin' && role !== 'manager' && role !== 'supervisor') {
-    return 0;
-  }
   //make sure the user has the role admin and is therefore allowed to modify any user
   let user = await getUserByIdDB(jwt.userId);
   user.roles = getRoles(user.roles);
@@ -270,6 +267,9 @@ export async function addRoleToUserByUserIdService(jwt, id, role) {
   let result = 0;
   if (user.roles.admin === true) {
       let adduser = await getUserByIdDB(id);
+      if (adduser === 0) {
+        return 0;
+      }
       adduser.roles = getRoles(adduser.roles);
       //if the user already has the role there is no need to call the database for the insertion
       if (role === 'admin' && adduser.roles.admin === true || role === 'supervisor' && adduser.roles.supervisor === true || role === 'manager' && adduser.roles.manager === true) {

@@ -1,7 +1,7 @@
 import express from 'express'
-import { getAllEventsController, getEventsForHeroController, modifyEventByIdController, deleteEventByIdController, getEventByIdController, getEventByTypeController, createEventController} from '../controller/eventController.js'
+import { getAllEventsController, getEventTypesController, getEventsForHeroController, modifyEventByIdController, deleteEventByIdController, getEventByIdController, getEventByTypeController, createEventController } from '../controller/eventController.js'
 
-export const eventRouter = express.Router({mergeParams: true})
+export const eventRouter = express.Router({ mergeParams: true })
 
 //all routes concerning the events
 
@@ -71,6 +71,26 @@ eventRouter.get('', getAllEventsController);
  *                 $ref: '#/components/schemas/event'
  */
 eventRouter.get('/:id', getEventByIdController);
+
+
+/**
+ * @swagger
+ * /events/type/all:
+ *   get:
+ *     summary: Get all the types an event can be
+ *     tags: [Events]
+ *     responses:
+ *       200:
+ *         description:  Get all the different event types
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string 
+ */
+eventRouter.get('/type/all', getEventTypesController);
+
 
 /**
  * @swagger
@@ -145,9 +165,33 @@ eventRouter.get('/hero/:id', getEventsForHeroController);
  *       required: true
  *       content:
  *         application/json:
- *           description: The user to create.
+ *           description: The event to modify.
  *           schema:
- *             $ref: '#/components/schemas/event'
+ *              type: object
+ *              required:
+ *                  - event_id
+ *                  - type
+ *                  - description
+ *                  - name
+ *              properties:
+ *                  event_id:
+ *                      type: Integer
+ *                      description: The auto-generated id of the event.
+ *                  type:
+ *                      type: string
+ *                      description: The type of the event. Has to be either 'kill', 'help', 'heal', 'immobile', 'res, 'stun' or 'special'.
+ *                  description:
+ *                      type: string
+ *                      description: The description of the event.
+ *                  name:
+ *                      type: string
+ *                      description: The name of the character it is affiliated with.
+ *                      required: false
+ *              example:
+ *                  event_id: 14
+ *                  type: kill
+ *                  description: $1 has killed $2.
+ *                  name: Ana
  *     responses:
  *       200:
  *         description: Modify an event by its id

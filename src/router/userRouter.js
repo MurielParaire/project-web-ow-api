@@ -237,13 +237,11 @@ userRouter.post('/history', postUserHistoryController);
  *            $ref: '#/components/schemas/userPost'
  *     responses:
  *       200:
- *         description: The list of all the last games played by the user.
+ *         description: status of the request.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/history'
+ *               type: Integer
  *       401: 
  *         description: You are not allowed to see this information
  *         content:
@@ -396,6 +394,12 @@ userRouter.put('/:id', modifyUserByIdController);
  *         required: true
  *         schema:
  *            type: string
+ *       - name: id
+ *         in: query
+ *         description: the id of the user
+ *         required: true
+ *         schema:
+ *            type: Integer
  *       - name: role
  *         in: query
  *         description: User role to add

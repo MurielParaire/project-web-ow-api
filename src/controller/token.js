@@ -12,7 +12,7 @@ export function getJWT(jwt) {
     try {
         jwt = jwt.replace('"', '');
         jwt = jwt.replace('"', '');
-        jwt = Jwt.verify(jwt, 'secret');
+        jwt = Jwt.verify(jwt, process.env.JWT_PUBLIC_KEY,);
         jwt.status = 200;
         return jwt;
     }

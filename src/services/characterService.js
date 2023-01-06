@@ -21,8 +21,8 @@ export async function getAllHeroesService() {
 export async function getSomeHeroesService(limit, offset) {
     try {
         //converting the limit and offset to Integers
-        limit = BigInt(limit);
-        offset = BigInt(offset);
+        limit = parseInt(limit);
+        offset = parseInt(offset);
         let result = await getSomeHeroesDB(limit, offset);
         return result;
     }

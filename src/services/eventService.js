@@ -1,5 +1,5 @@
 import { getHeroByNameDB } from '../database/characterDB.js';
-import { getAllEventsDB, getEventsWithoutHeroDB, getEventsForHeroDB, deleteEventByIdDB, modifyEventByIdDB, getSomeEventsDB, getEventByIdDB, getEventByTypeDB, createEventDB } from '../database/eventDB.js'
+import { getAllEventsDB, getEventsWithoutHeroDB, getEventTypesDB, getEventsForHeroDB, deleteEventByIdDB, modifyEventByIdDB, getSomeEventsDB, getEventByIdDB, getEventByTypeDB, createEventDB } from '../database/eventDB.js'
 import { getUserByIdDB } from '../database/userDB.js'
 import { getRoles } from '../services/userService.js'
 
@@ -21,8 +21,8 @@ export async function getAllEventsService() {
  * */
 export async function getSomeEventsService(limit, offset) {
     try {
-        limit = BigInt(limit);
-        offset = BigInt(offset);
+        limit = parseInt(limit);
+        offset = parseInt(offset);
         let result = await getSomeEventsDB(limit, offset);
         return result;
     }
@@ -41,6 +41,7 @@ export async function getSomeEventsService(limit, offset) {
  * */
 export async function getEventByIdService(id) {
     try {
+        id = parseInt(id);
         let result = await getEventByIdDB(id);
         return result;
     }
@@ -58,7 +59,25 @@ export async function getEventByIdService(id) {
  * */
 export async function getEventByTypeService(type) {
     try {
+        if (type.indexOf(' ') > 0 || (type !== 'kill' && type !== 'help' && type !== 'res' && type !== 'immobile' && type !== 'protect' && type !== 'heal')) {
+            return {msg: "type has to be one of the following: 'kill', 'help', 'res', 'immobile', 'protect', 'heal'"}
+        }
         let result = await getEventByTypeDB(type);
+        return result;
+    }
+    catch (err) {
+        console.log(err);
+        return err.err;
+    }
+}
+
+
+/* Description: get a list of all the event types
+ * Returns : a list of all the event types or an error message in case an error is thrown
+ * */
+export async function getEventTypesService() {
+    try {
+        let result = await getEventTypesDB();
         return result;
     }
     catch (err) {
@@ -75,8 +94,10 @@ export async function getEventByTypeService(type) {
  * */
 export async function getEventsForHeroService(hero) {
     try {
+        hero = parseInt(hero);
         if (hero === 0) {
             //get all events that don't have a specified hero
+            console.log('0')
             let result = await getEventsWithoutHeroDB();
             return result;
         }
@@ -99,22 +120,22 @@ export async function getEventsForHeroService(hero) {
 export async function createEventService(jwt, event) {
     try {
         //make sure the user has the role manager and is therefore allowed to modify an event
-        if (event.character === 0) {
-            event.character = null;
-        }
-        else {
-            let character = getHeroByNameDB(event.character);
-            if (character != 0) {
-                event.character = character.id_char;
-            }
-            else {
-                event.character = null;
-            }
-        }
         let user = await getUserByIdDB(jwt.userId);
         user.roles = getRoles(user.roles);
         let result = 0;
         if (user.roles.manager === true) {
+            if (event.character === 0) {
+                event.character = null;
+            }
+            else {
+                let character = getHeroByNameDB(event.character);
+                if (character != 0) {
+                    event.character = character.id_char;
+                }
+                else {
+                    event.character = null;
+                }
+            }
             result = await createEventDB(event);
             return result;
         }
@@ -135,6 +156,7 @@ export async function createEventService(jwt, event) {
  * */ 
 export async function deleteEventByIdService(jwt, id) {
     try {
+        id = parseInt(id);
         //make sure the user has the role manager and is therefore allowed to modify an event
         let user = await getUserByIdDB(jwt.userId);
         user.roles = getRoles(user.roles);
@@ -146,7 +168,7 @@ export async function deleteEventByIdService(jwt, id) {
     }
     catch (err) {
         console.log(err);
-        return err.err;
+        return {msg: 'Please verify your inputs'};
     }
 }
 
@@ -164,13 +186,15 @@ export async function modifyEventByIdService(jwt, event) {
         user.roles = getRoles(user.roles);
         let result = 0;
         if (user.roles.manager === true) {
-            if (event.name !== 0 && event.name !== null) {
-                let hero = await getHeroByNameDB(event.name);
-                if (hero.length > 0) {
-                    event.character = hero[0].id_char;
+            if ('name' in event) {
+                if (event.name !== 0 && event.name !== null && event.name !== "") {
+                    let hero = await getHeroByNameDB(event.name);
+                    if (hero.length > 0) {
+                        event.character = hero[0].id_char;
+                    }
                 }
+                result = await modifyEventByIdDB(event);
             }
-            result = await modifyEventByIdDB(event);
         }
         else {
             return { msg: 'You are not allowed to modify any events.' }

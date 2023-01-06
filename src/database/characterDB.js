@@ -7,11 +7,11 @@ import { public_pool } from './connection_details/connection_public.js'
  * */
 export async function getAllHeroesDB() {
     try {
-        let results = await public_pool.query('SELECT * FROM character order by event_id ;');
+        let results = await public_pool.query('SELECT * FROM character order by id_char ;');
         return results.rows;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -29,7 +29,7 @@ export async function getSomeHeroesDB(limit, offset) {
         return results.rows;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -46,7 +46,7 @@ export async function getHeroByIdDB(id) {
         return results.rows;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem with finding the specified character. Please reload your page and retry again in a few moments'};
     }
 }
@@ -63,7 +63,7 @@ export async function getHeroByNameDB(name) {
         return results.rows;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem with finding the specified character. Please reload your page and retry again in a few moments'};
     }
 }
@@ -85,7 +85,7 @@ export async function getHeroesByRoleDB(role) {
         } 
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem. Please verify the role.'};
     }
 }
@@ -107,7 +107,7 @@ export async function getEventsOfHeroByNameDB(name) {
         } 
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -129,7 +129,7 @@ export async function getImageOfHeroByNameDB(name) {
         } 
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -146,7 +146,7 @@ export async function createHeroDB(hero) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but the hero could not be created. Please verify your inputs.'};
     }
 }
@@ -164,7 +164,7 @@ export async function deleteHeroByIdDB(id) {
     }
     catch (err) {
         console.log(err)
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem. This hero could not be deleted'};
     }
 }
@@ -181,7 +181,7 @@ export async function modifyHeroByIdDB(hero) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }

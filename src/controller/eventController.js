@@ -1,4 +1,4 @@
-import {getAllEventsService, getEventsForHeroService, modifyEventByIdService, deleteEventByIdService, getSomeEventsService, getEventByIdService, getEventByTypeService, createEventService} from '../services/eventService.js'
+import {getAllEventsService, getEventsForHeroService, getEventTypesService, modifyEventByIdService, deleteEventByIdService, getSomeEventsService, getEventByIdService, getEventByTypeService, createEventService} from '../services/eventService.js'
 import { getJWT } from './token.js';
 
 
@@ -15,7 +15,7 @@ export const getAllEventsController = async (req, res) => {
     try {
         let results = 0;
         if ('limit' in req.query && 'offset' in req.query) {
-            results = await getSomeEventsService(req.query.limit, req.query.offset);
+            results = await getSomeEventsService(parseInt(req.query.limit), parseInt(req.query.offset));
         }
         else {
             results = await getAllEventsService();
@@ -39,8 +39,26 @@ export const getAllEventsController = async (req, res) => {
  * */
 export const getEventByIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = parseInt(req.params.id);
         let results = await getEventByIdService(id);
+        res.status(200).json(results);
+    }
+    catch (err) {
+        res.status(500);
+        console.log(err);
+    }
+}
+
+
+/* Description: returns all the different event types
+ * Arguments: 
+ *     - req (required) : http request
+ *     - res (required) : instance of server response => where the controller sends all the answers
+ * Returns : a list of all the event types
+ * */
+export const getEventTypesController = async (req, res) => {
+    try {
+        let results = await getEventTypesService();
         res.status(200).json(results);
     }
     catch (err) {
@@ -133,7 +151,7 @@ export const createEventController = async (req, res) => {
  * */
 export const deleteEventByIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = parseInt(req.params.id);
         let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
@@ -162,7 +180,7 @@ export const deleteEventByIdController = async (req, res) => {
  * */
 export const modifyEventByIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = parseInt(req.params.id);
         let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {

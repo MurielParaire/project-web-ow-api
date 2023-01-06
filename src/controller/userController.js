@@ -21,7 +21,7 @@ export const getAllUsersController = async (req, res) => {
         }
         let results = 0;
         if ('limit' in req.query && 'offset' in req.query) {
-            results = await getSomeUsersService(req.query.limit, req.query.offset, jwt);
+            results = await getSomeUsersService(parseInt(req.query.limit), parseInt(req.query.offset), jwt);
         }
         else {
             results = await getAllUsersService(jwt);
@@ -182,7 +182,7 @@ export const createUserController = async (req, res) => {
  * */
 export const deleteUserByIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = parseInt(req.params.id);
         let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
@@ -211,7 +211,7 @@ export const deleteUserByIdController = async (req, res) => {
  * */
 export const modifyUserByIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = parseInt(req.params.id);
         let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
@@ -246,7 +246,7 @@ export const modifyUserByIdController = async (req, res) => {
  * */
 export const deleteRoleFromUserByUserIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = parseInt(req.params.id);
         const role = req.query.role;
         let jwt = req.header('auth');
         jwt = getJWT(jwt)

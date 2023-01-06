@@ -14,10 +14,8 @@ import { getJWT } from './token.js';
 export const getAllHeroesController = async (req, res) => {
     try {
         let results = 0;
-        console.log('query')
-        console.log(req.query)
         if ('limit' in req.query && 'offset' in req.query) {
-            results = await getSomeHeroesService(req.query.limit, req.query.offset);
+            results = await getSomeHeroesService(parseInt(req.query.limit), parseInt(req.query.offset));
         }
         else {
             results = await getAllHeroesService();
@@ -64,6 +62,10 @@ export const getHeroByIdController = async (req, res) => {
 export const getHeroByNameController = async (req, res) => {
     try {
         const name = req.params.name;
+        if (name.length > 20) {
+            res.status(500);
+            return 0; 
+        }
         let results = await getHeroByNameService(name);
         res.status(200).json(results);
     }
@@ -106,6 +108,10 @@ export const getHeroesByRoleController = async (req, res) => {
 export const getEventsOfHeroByNameController = async (req, res) => {
     try {
         const name = req.params.name;
+        if (name.length > 20) {
+            res.status(500);
+            return 0; 
+        }
         let results = await getEventsOfHeroByNameService(name);
         res.status(200).json(results);
     }
@@ -157,7 +163,7 @@ export const createHeroController = async (req, res) => {
  * */
 export const deleteHeroByIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id =parseInt(req.params.id);
         let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {
@@ -186,7 +192,7 @@ export const deleteHeroByIdController = async (req, res) => {
  * */
 export const modifyHeroByIdController = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = parseInt(req.params.id);
         let jwt = req.header('auth');
         jwt = getJWT(jwt)
         if (jwt.status === 401) {

@@ -14,7 +14,7 @@ export async function getAllUsersDB() {
         
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -35,7 +35,7 @@ export async function getSomeUsersDB(limit, offset) {
         
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -55,7 +55,7 @@ export async function getUserByUsernameDB(username) {
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -75,7 +75,7 @@ export async function getPasswordFromUserDB(id) {
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -97,7 +97,7 @@ export async function getUserHistoryByIdDB(id, limit, offset) {
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -119,7 +119,7 @@ export async function getUserByIdDB(id) {
         return user;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -140,7 +140,7 @@ export async function getUserRolesByIdDB(id) {
         
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -161,7 +161,7 @@ export async function postUserHistoryDB(id, history) {
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -206,7 +206,7 @@ export async function getUserIdByUsername(user) {
 
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -225,7 +225,7 @@ export async function getCountUserDB() {
         
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -242,7 +242,7 @@ export async function deleteUserByIdDB(id) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -259,7 +259,7 @@ export async function modifyUserByIdDB(user) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -277,7 +277,7 @@ export async function deleteRoleFromUserByUserIdDB(id, role) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -297,7 +297,7 @@ export async function getRoleIdFromRoleDB(role) {
         return results.rows[0];
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -315,7 +315,7 @@ export async function addRoleToUserByUserIdDB(id, role) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }

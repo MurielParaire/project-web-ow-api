@@ -48,7 +48,7 @@ const options = {
         },
         servers: [
           {
-            url: "http://localhost:3000/owapi",
+            url: "http://162.38.112.158:3000/owapi",
           },
         ],
     },

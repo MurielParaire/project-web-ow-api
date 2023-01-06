@@ -11,7 +11,7 @@ export async function getAllEventsDB() {
         return results.rows;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -29,7 +29,7 @@ export async function getSomeEventsDB(limit, offset) {
         return results.rows;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -49,7 +49,7 @@ export async function getEventByIdDB(id) {
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -69,8 +69,28 @@ export async function getEventByTypeDB(type) {
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem. Please verify your type input.'};
+    }
+}
+
+
+/* Description: get an event by its type
+ * Arguments: 
+ *     - type (required) : the type of the event
+ * Returns : a list of some events or an error message in case an error is thrown
+ * */
+export async function getEventTypesDB() {
+    try {
+        let results = await public_pool.query('select distinct type from event;', []);
+        if (results.rows.length > 0) {
+            return results.rows;
+          }
+        return 0;
+    }
+    catch (err) {
+        console.log(err);
+        return {msg: 'Sorry but there was a problem.'};
     }
 }
 
@@ -89,7 +109,7 @@ export async function getEventsForHeroDB(hero) {
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -101,13 +121,14 @@ export async function getEventsForHeroDB(hero) {
 export async function getEventsWithoutHeroDB() {
     try {
         let results = await public_pool.query('select * from event where character is null;', []);
-        if (results.rows.length > 0) {
+        console.log(results)
+        if (results.rowCount > 0) {
             return results.rows;
           }
         return 0;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -124,7 +145,7 @@ export async function createEventDB(event) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem. Please verify your inputs.'};
     }
 }
@@ -141,7 +162,7 @@ export async function deleteEventByIdDB(id) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem.'};
     }
 }
@@ -158,7 +179,7 @@ export async function modifyEventByIdDB(event) {
         return results.rowCount;
     }
     catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return {msg: 'Sorry but there was a problem. Please verify your inputs'};
     }
 }

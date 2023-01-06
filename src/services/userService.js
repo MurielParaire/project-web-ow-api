@@ -25,6 +25,7 @@ async function getHash(password) {
  * */
 export async function postVerifyUserService(username, password) {
   //get the id of the user with this username
+  
   let user = await getUserByUsernameDB(username);
   if (user[0].user_id === 0) {
     return 0;
@@ -41,8 +42,8 @@ export async function postVerifyUserService(username, password) {
     time: Date(),
     userId: user[0].user_id,
   }
-  //the token expires after 7200s or 2h automatically
-  const token = jwt.sign(data, 'secret', { expiresIn: '7200s' }, process.env.JWT_SECRET_KEY);
+  //the token expires after 4h automatically
+  const token = jwt.sign(data, process.env.JWT_PUBLIC_KEY, { expiresIn: '4h' }, process.env.JWT_SECRET_KEY);
   return token;
 }
 
@@ -231,6 +232,9 @@ export async function modifyUserByIdService(user) {
  * Returns : 1 if it worked, 0 if it didn't or an error message in case an error is thrown
  * */
 export async function deleteRoleFromUserByUserIdService(jwt, id, role) {
+  if (role !== 'admin' && role !== 'manager' && role !== 'supervisor') {
+    return 0;
+  }
   //make sure the user has the role admin and is therefore allowed to modify any user
   let user = await getUserByIdDB(jwt.userId);
   user.roles = getRoles(user.roles);
@@ -257,6 +261,9 @@ export async function deleteRoleFromUserByUserIdService(jwt, id, role) {
  * Returns : 1 if it worked, 0 if it didn't or an error message in case an error is thrown
  * */
 export async function addRoleToUserByUserIdService(jwt, id, role) {
+  if (role !== 'admin' && role !== 'manager' && role !== 'supervisor') {
+    return 0;
+  }
   //make sure the user has the role admin and is therefore allowed to modify any user
   let user = await getUserByIdDB(jwt.userId);
   user.roles = getRoles(user.roles);

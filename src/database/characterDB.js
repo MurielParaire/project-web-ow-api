@@ -76,7 +76,7 @@ export async function getHeroByNameDB(name) {
  * */
 export async function getHeroesByRoleDB(role) {
     try {
-        let results = await public_pool.query('select * from character where role= $1 ;', [role]);
+        let results = await public_pool.query('select * from character where role= $1  order by name;', [role]);
         if (results.rows.length > 0) {
           return results.rows;
         }

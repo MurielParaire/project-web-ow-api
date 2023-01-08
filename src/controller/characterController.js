@@ -13,6 +13,7 @@ import { getJWT } from './token.js';
  * */
 export const getAllHeroesController = async (req, res) => {
     try {
+        console.log('here')
         let results = 0;
         if ('limit' in req.query && 'offset' in req.query) {
             results = await getSomeHeroesService(parseInt(req.query.limit), parseInt(req.query.offset));

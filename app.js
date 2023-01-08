@@ -17,7 +17,8 @@ dotenv.config();
 
 //specifying who can and who can't access our application
 api.use(cors({
-    origin: '*'
+    origin: 'https://cluster-2022-8.dopolytech.fr',
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
 }));
 
 
@@ -48,7 +49,7 @@ const options = {
         },
         servers: [
           {
-            url: "http://localhost:3000/owapi",
+            url: "https://cluster-2022-8.dopolytech.fr/owapi",
           },
         ],
     },
@@ -65,5 +66,5 @@ api.use(
 
 //running the api
 api.listen(port, () => {
-    console.log(`App running on port http://localhost:${port}/owapi. \n The documentation can be found on http://localhost:${port}/owapi/api-docs`)
+    console.log(`App running on port https://localhost:${port}/owapi. \n The documentation can be found on https://localhost:${port}/owapi/api-docs`)
 });

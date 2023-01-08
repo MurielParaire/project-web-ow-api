@@ -127,9 +127,9 @@ export async function createEventService(jwt, event) {
                 event.character = null;
             }
             else {
-                let character = getHeroByNameDB(event.character);
-                if (character != 0) {
-                    event.character = character.id_char;
+                let character = await getHeroByNameDB(event.character);
+                if (character.length > 0) {
+                    event.character = character[0].id_char;
                 }
                 else {
                     event.character = null;
